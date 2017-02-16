@@ -198,9 +198,9 @@
      :children [
                 [title
                  :level :level3
-                 :label "Column Metadata:"]
+                 :label "File Metadata:"]
                 [label
-                 :label "This metadata is added to all rows in the column."]
+                 :label "This metadata is added to all rows in the table."]
                 [gap
                  :size "20px"]
                 [button
@@ -211,6 +211,14 @@
 
 (defn rows-meta []
   (fn []
+    [h-box
+     :padding "20px"
+     :children [
+                [vertical-pill-tabs
+                 :model 0
+                 :tabs (atom [{:id 0 :label "Time"} {:id 1 :label "Location"} {:id 2 :label "Value"}])
+                 :on-change #()]
+                ]]
     ))
 
 (defn column []
@@ -218,14 +226,18 @@
     [v-box
      :padding "20px"
      :children [
-                [metadata]
-                [gap
-                 :size "20px"]
                 [title
                  :level :level3
-                 :label "Value Metadata:"]
+                 :label "Column Metadata:"]
                 [label
                  :label "This metadata describes the type of values in each row of the column."]
+                [gap
+                 :size "20px"]
+                [button
+                 :label "Add"
+                 :class "btn-primary"
+                 :on-click #()]
+                [rows-meta]
                 ]]))
 
 (defn columns []
@@ -235,9 +247,12 @@
      :children [
                 [title
                  :level :level2
-                 :label "Columns:"]
+                 :label "Table:"]
                 [gap
                  :size "10px"]
+                [metadata]
+                [gap
+                 :size "20px"]
                 [horizontal-tabs
                  :model (reagent/atom ::tab1)
                  :tabs [
