@@ -15,6 +15,11 @@
    db))
 
 (re-frame/reg-sub
+ :data-types
+ (fn [db]
+   (:datatypes db)))
+
+(re-frame/reg-sub
  :ftypes
  (fn [db]
    (:ftypes db)))
@@ -44,3 +49,4 @@
  :fname
  (fn [db]
    (:fname db)))
+

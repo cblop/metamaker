@@ -1,8 +1,13 @@
 (ns metagator.repl
-  (:require [cljsjs.papaparse]
+  (:require 
             [re-frame.core :as re-frame]))
 
 (def db (re-frame/subscribe [:db]))
+(def types (re-frame/subscribe [:datatypes]))
 
-(:ftype2 @db)
+;; @types
+
+;; (:datatypes @db)
+
+;; (:ftype2 @db)
 

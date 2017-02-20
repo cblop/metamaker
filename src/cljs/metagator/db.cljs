@@ -1,5 +1,80 @@
 (ns metagator.db)
 
+(def datatypes
+  [{:label "Start time"
+    :parent "time"
+    :type :string
+    :rdf "seas:measurementStart"}
+   {:label "End time"
+    :parent "time"
+    :type :string
+    :rdf "seas:measurementEnd"}
+   {:label "Timestamp"
+    :parent "time"
+    :type :string
+    :rdf "xsd:dateTimeStamp"}
+   {:label "Device"
+    :parent "location"
+    :type :string
+    :rdf "seas:measurementSite"}
+   {:label "Sensor"
+    :parent "location"
+    :type :string
+    :rdf "seas:measurementInstrument"}
+   {:label "Room"
+    :parent "location"
+    :type :string
+    :rdf "seas:Room"}
+   {:label "House"
+    :parent "location"
+    :type :string
+    :rdf "seas:House"}
+   {:label "Appliance"
+    :parent "location"
+    :type :string
+    :rdf "seas:Appliance"}
+   {:label "Value"
+    :parent "value"
+    :type :float
+    :rdf "seas:value"}
+   {:label "Maximum Value"
+    :parent "value"
+    :type :float
+    :rdf "dm4t:maxValue"}
+   {:label "Minimum Value"
+    :parent "value"
+    :type :float
+    :rdf "dm4t:minValue"}
+   {:label "Mean Value"
+    :parent "value"
+    :type :float
+    :rdf "dm4t:meanValue"}
+   {:label "Power (Watts)"
+    :parent "type"
+    :type :float
+    :rdf "seas:PowerQuantity"}
+   {:label "Humidity (relative)"
+    :parent "type"
+    :type :float
+    :rdf "seas:relativeHumidity"}
+   {:label "Gas"
+    :parent "type"
+    :type :float
+    :rdf "dm4t:GasReading"}
+   {:label "CO2"
+    :parent "type"
+    :type :float
+    :rdf "dm4t:Co2Reading"}
+   {:label "Light"
+    :parent "type"
+    :type :float
+    :rdf "dm4t:LightReading"}
+   {:label "Motion (PIR)"
+    :parent "type"
+    :type :float
+    :rdf "dm4t:MotionReading"}
+   ])
+
 (def default-db
   {:name "MetaMaker"
    :fname "http://mist.cs.bath.ac.uk/refit-cleaned/CLEAN_House1.csv"
@@ -7,6 +82,7 @@
    :ftype 0
    :ftype2 0
    :ftype3 0
+   :datatypes datatypes
    :ftypes [{:id 0 :label "readings" :post "which are" :types [{:id 0 :label "in one location" :post "named"}
                                                                {:id 1 :label "measurements of one type" :post ":" :types [{:id 0 :label "Power"}
                                                                                                                           {:id 1 :label "Gas"}

@@ -210,16 +210,50 @@
                 ]]))
 
 (defn rows-meta []
-  (fn []
-    [h-box
-     :padding "20px"
-     :children [
-                [vertical-pill-tabs
-                 :model 0
-                 :tabs (atom [{:id 0 :label "Time"} {:id 1 :label "Location"} {:id 2 :label "Value"}])
-                 :on-change #()]
-                ]]
-    ))
+  (let [types (re-frame/subscribe [:data-types])]
+    (fn []
+      [h-box
+       :padding "20px"
+       :children [
+                  [v-box
+                   :width "30%"
+                   :children
+                   [
+                    [label
+                     :label "Category:"]
+                    [single-dropdown
+                     :model 0
+                     :on-change #()
+                     :width "30%"
+                     :choices (vec (set (map #(get % :parent) @types)))
+                     ]]]
+                  [v-box
+                   :width "30%"
+                   :children
+                   [
+                    [label
+                     :label "Sub-category:"]
+                    [single-dropdown
+                     :model 0
+                     :on-change #()
+                     :width "30%"
+                     :choices (vec (set (map #(get % :parent) @types)))
+                     ]]]
+                  [v-box
+                   :width "30%"
+                   :children
+                   [
+                    [label
+                     :label "Data type:"]
+                    [single-dropdown
+                     :model 0
+                     :on-change #()
+                     :width "30%"
+                     :choices (vec (set (map #(get % :parent) @types)))
+                     ]]]
+                  ]
+       ]
+      )))
 
 (defn column []
   (fn []
