@@ -65,11 +65,23 @@
      (assoc-in db [:metas tab] (conj (nth (:metas db) tab) {:category nil :metadata nil})))))
 
 (re-frame/reg-event-db
+ :add-file-meta
+ (fn [db _]
+   (assoc db :file-metas (conj (:file-metas db) {:category nil :metadata nil}))))
+
+(re-frame/reg-event-db
  :set-category
  (fn [db [_ cat-id row-id]]
    (let [tab (:selected-tab db)
          cat-label (re-frame/subscribe [:cat-label cat-id])]
      (assoc-in db [:metas tab row-id :category] @cat-label))))
+
+
+(re-frame/reg-event-db
+ :set-file-category
+ (fn [db [_ cat-id row-id]]
+   (let [cat-label (re-frame/subscribe [:cat-label cat-id])]
+     (assoc-in db [:file-metas row-id :category] @cat-label))))
 
 ;; (re-frame/reg-event-db
 ;;  :set-metadata
@@ -88,6 +100,19 @@
      ;; db
      )))
 
+
+(re-frame/reg-event-db
+ :set-file-metadata
+ (fn [db [_ meta-id cat row-id]]
+   (let [
+         metas (re-frame/subscribe [:metas-for-cat cat])
+         label (:label (nth @metas meta-id))
+         meta-data (re-frame/subscribe [:meta-for-label label])
+         ]
+     (assoc-in db [:file-metas row-id :metadata] @meta-data)
+     ;; db
+     )))
+
 (defn drop-nth [coll n]
   (keep-indexed #(if (not= %1 n) %2) coll))
 
@@ -95,7 +120,13 @@
  :delete-row
  (fn [db [_ row-id]]
    (let [tab (:selected-tab db)]
-     (assoc-in db [:metas tab] (drop-nth (nth (:metas db) tab) row-id)))))
+     (assoc-in db [:metas tab] (vec (drop-nth (nth (:metas db) tab) row-id))))))
+
+
+(re-frame/reg-event-db
+ :delete-file-row
+ (fn [db [_ row-id]]
+   (assoc db :file-metas (vec (drop-nth (:file-metas db) row-id)))))
 
 (re-frame/reg-event-db
  :set-label
@@ -105,6 +136,13 @@
      (assoc-in db [:metas tab row-id :label] label-data)
      ;; db
      )))
+
+(re-frame/reg-event-db
+ :set-file-label
+ (fn [db [_ label-data row-id]]
+   (assoc-in db [:file-metas row-id :label] label-data)
+   ;; db
+   ))
 
 (re-frame/reg-event-db
  :change-tab

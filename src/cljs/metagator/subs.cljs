@@ -64,11 +64,25 @@
    (let [row (:selected-tab db)]
      (nth (:metas db) row))))
 
+(re-frame/reg-sub
+ :get-file-meta
+ (fn [db]
+   (:file-metas db)))
 
 (re-frame/reg-sub
  :selected-meta
  (fn [db [_ metas i]]
    (let [metam (re-frame/subscribe [:get-meta]) ; metadata for all rows
+         m (:label (:metadata (nth @metam i))) ; metadata label for this row
+         match (:id (first (filter #(= m (:label %)) metas))) ; index of metadata label in dropdown that matches
+         ]
+     match
+     )))
+
+(re-frame/reg-sub
+ :selected-file-meta
+ (fn [db [_ metas i]]
+   (let [metam (re-frame/subscribe [:get-file-meta]) ; metadata for all rows
          m (:label (:metadata (nth @metam i))) ; metadata label for this row
          match (:id (first (filter #(= m (:label %)) metas))) ; index of metadata label in dropdown that matches
          ]

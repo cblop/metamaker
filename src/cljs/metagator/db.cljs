@@ -82,6 +82,7 @@
    :selected-tab 0
    :datatypes datatypes
    :metas []
+   :file-metas []
    :types [{:id 0 :label "String"} {:id 1 :label "Number"} {:id 2 :label "Date"}]
    }
    )

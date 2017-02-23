@@ -31,27 +31,13 @@
        :class "btn-primary"
        :on-click #(re-frame/dispatch [:fetch @fname])])))
 
-(defn metadata []
-  (fn []
-    [v-box
-     :children [
-                [title
-                 :level :level3
-                 :label "File Metadata:"]
-                [label
-                 :label "This metadata is added to all rows in the table."]
-                [gap
-                 :size "20px"]
-                [button
-                 :label "Add Metadata"
-                 :class "btn-primary"
-                 :on-click #()]
-                ]]))
 
-(defn rows-meta []
+
+(defn rows-meta [type]
   (let [types (re-frame/subscribe [:data-types])
-        metas (re-frame/subscribe [:get-meta])
+        metas (if (= type :file) (re-frame/subscribe [:get-file-meta]) (re-frame/subscribe [:get-meta]))
         cats (vec (set (map :parent @types)))
+        file (if (= type :file) true false)
         catmap (map (fn [x i] (hash-map :id i :label x)) cats (range (count cats)))
         id-for-label (fn [label] (:id (first (filter #(= (:label %) label) catmap))))
         ]
@@ -60,7 +46,7 @@
        (for [[i m] (map-indexed vector @metas)]
          [h-box
           :padding "20px"
-          :style {:background-color "#eef"
+          :style {:background-color (if (= type :file) "#dfd" "#eef")
                   :margin-bottom "10px"}
           :children [
                      [v-box
@@ -71,13 +57,13 @@
                         :label "Category:"]
                        [single-dropdown
                         :model (id-for-label (:category m))
-                        :on-change #(re-frame/dispatch [:set-category % i])
+                        :on-change (if file #(re-frame/dispatch [:set-file-category % i]) #(re-frame/dispatch [:set-category % i]))
                         :width "90%"
                         :choices catmap
                         ]]]
                      (if (:category m)
                        (let [metafilter (re-frame/subscribe [:metas-for-cat (:category m)])
-                             selected-meta (re-frame/subscribe [:selected-meta @metafilter i])]
+                             selected-meta (if file (re-frame/subscribe [:selected-file-meta @metafilter i]) (re-frame/subscribe [:selected-meta @metafilter i]))]
                          [v-box
                           :width "30%"
                           :children
@@ -86,7 +72,7 @@
                             :label "Metadata:"]
                            [single-dropdown
                             :model @selected-meta
-                            :on-change #(re-frame/dispatch [:set-metadata % (:category m) i])
+                            :on-change (if file #(re-frame/dispatch [:set-file-metadata % (:category m) i]) #(re-frame/dispatch [:set-metadata % (:category m) i]))
                             :width "90%"
                             :choices @metafilter
                             ]]]))
@@ -99,7 +85,7 @@
                           :label "Label (optional):"]
                          [input-text
                           :model (if (:label m) (:label m) "")
-                          :on-change #(re-frame/dispatch [:set-label % i])
+                          :on-change (if file #(re-frame/dispatch [:set-file-label % i]) #(re-frame/dispatch [:set-label % i]))
                           :width "90%"
                           ]]])
                      [v-box
@@ -108,10 +94,30 @@
                                  [button
                                   :label "Delete"
                                   :class "btn-danger"
-                                  :on-click #(re-frame/dispatch [:delete-row i])]]]
+                                  :on-click (if file #(re-frame/dispatch [:delete-file-row i]) #(re-frame/dispatch [:delete-row i]))]]]
                      ]
           ])]
       )))
+
+(defn metadata []
+  (fn []
+    [v-box
+     :children [
+                [title
+                 :level :level3
+                 :label "File Metadata:"]
+                [label
+                 :label "This metadata is added to all rows in the table."]
+                [gap
+                 :size "20px"]
+                [rows-meta :file]
+                [gap
+                 :size "20px"]
+                [button
+                 :label "Add Metadata"
+                 :class "btn-primary"
+                 :on-click #(re-frame/dispatch [:add-file-meta])]
+                ]]))
 
 (defn dtype []
   (let [selected (re-frame/subscribe [:selected-tab])
@@ -146,7 +152,7 @@
                 [title
                  :level :level3
                  :label "Metadata:"]
-                [rows-meta]
+                [rows-meta :column]
                 [gap
                  :size "20px"]
                 [button
