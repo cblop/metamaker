@@ -72,13 +72,21 @@
      (assoc-in db [:metas tab row-id :category] @cat-label))))
 
 ;; (re-frame/reg-event-db
-;;  :set-meta
-;;  (fn [db [_ meta-id row-id]]
-;;    (let [tab (:selected-tab db)
-;;          cat-label (re-frame/subscribe [:cat-label cat-id])
+;;  :set-metadata
+;;  (fn [db _]
+;;    db))
 
-;;          ]
-;;      (assoc-in db [:metas tab row-id :category] cat-label))))
+(re-frame/reg-event-db
+ :set-metadata
+ (fn [db [_ meta-id cat row-id]]
+   (let [tab (:selected-tab db)
+         metas (re-frame/subscribe [:metas-for-cat cat])
+         label (:label (nth @metas meta-id))
+         meta-data (re-frame/subscribe [:meta-for-label label])
+         ]
+     (assoc-in db [:metas tab row-id :metadata] @meta-data)
+     ;; db
+     )))
 
 (re-frame/reg-event-db
  :change-tab

@@ -31,168 +31,6 @@
        :class "btn-primary"
        :on-click #(re-frame/dispatch [:fetch @fname])])))
 
-(defn rows []
-  (let [width "12.5%"]
-    (fn []
-      [v-box
-       :gap "10px"
-       :margin "0 20% 0 0"
-       :children [
-                  [h-box
-                   :justify :center
-                   :children [
-                              [title
-                               :level :level2
-                               :label "Rows"]]]
-                  [gap
-                   :size "5px"]
-                  [h-box
-                   :margin "0 0 0 -10%"
-                   :gap "10px"
-                   :children [
-                              [v-box
-                               :gap "10px"
-                               :margin "41px 0 0 0"
-                               :children [
-                                          [label
-                                           :class "row-header"
-                                           :label "Data Type:"]
-                                          [label
-                                           :class "row-header"
-                                           :label "Reading Type:"]
-                                          [label
-                                           :class "row-header"
-                                           :label "Source:"]
-                                          [label
-                                           :class "row-header"
-                                           :label "Unit:"]
-                                          [label
-                                           :class "row-header"
-                                           :label "Frequency:"]
-                                          ]]
-                              [v-box
-                               :gap "10px"
-                               :children [
-                                          [label
-                                           :class "column-header"
-                                           :label "Time"]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "time (mysql)"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Time"}]]
-                                          [label
-                                           :class "table-data na"
-                                           :label "N/A"]
-                                          [label
-                                           :class "table-data na"
-                                           :label "N/A"]
-                                          [label
-                                           :class "table-data na"
-                                           :label "N/A"]
-                                          ]
-                               ]
-                              [v-box
-                               :gap "10px"
-                               :children [
-                                          [label
-                                           :class "column-header"
-                                           :label "Unix"]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "integer"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Unix timestamp"}]]
-                                          [label
-                                           :class "table-data na"
-                                           :label "N/A"]
-                                          [label
-                                           :class "table-data na"
-                                           :label "N/A"]
-                                          [label
-                                           :class "table-data na"
-                                           :label "N/A"]
-                                          ]
-                               ]
-                              [v-box
-                               :gap "10px"
-                               :children [
-                                          [label
-                                           :class "column-header"
-                                           :label "Appliance_1"]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "integer"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Power"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Fridge 1"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Watts"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Every minute"}]]
-                                          ]
-                               ]
-                              [v-box
-                               :gap "10px"
-                               :children [
-                                          [label
-                                           :class "column-header"
-                                           :label "Appliance_2"]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "integer"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Power"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Heater 3"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Watts"}]]
-                                          [single-dropdown
-                                           :model 0
-                                           :on-change #()
-                                           :width "100%"
-                                           :choices [{:id 0 :label "Every minute"}]]
-                                          ]
-                               ]
-                              ]]
-                  ]])))
-
 (defn metadata []
   (fn []
     [v-box
@@ -226,7 +64,7 @@
                   :margin-bottom "10px"}
           :children [
                      [v-box
-                      :width "40%"
+                      :width "30%"
                       :children
                       [
                        [label
@@ -240,29 +78,29 @@
                      (if (:category m)
                        (let [metafilter (re-frame/subscribe [:metas-for-cat (:category m)])]
                          [v-box
-                          :width "40%"
+                          :width "30%"
                           :children
                           [
                            [label
                             :label "Metadata:"]
                            [single-dropdown
                             :model 0
-                            :on-change #(re-frame/dispatch [:set-meta % i])
+                            :on-change #(re-frame/dispatch [:set-metadata % (:category m) i])
                             :width "90%"
                             :choices @metafilter
                             ]]]))
-                     ;; [v-box
-                     ;;  :width "30%"
-                     ;;  :children
-                     ;;  [
-                     ;;   [label
-                     ;;    :label "Metadata:"]
-                     ;;   [single-dropdown
-                     ;;    :model 0
-                     ;;    :on-change #()
-                     ;;    :width "90%"
-                     ;;    :choices catmap
-                     ;;    ]]]
+                     (if (:meta m)
+                       [v-box
+                        :width "30%"
+                        :children
+                        [
+                         [label
+                          :label "Label:"]
+                         [input-text
+                          :model ""
+                          :on-change #(re-frame/dispatch [:set-label % i])
+                          :width "90%"
+                          ]]])
                      ]
           ])]
       )))
@@ -328,53 +166,6 @@
                   [column]
                   ]])))
 
-(defn file-type []
-  (let [choices (re-frame/subscribe [:ftypes])
-        ftype (re-frame/subscribe [:ftype])
-        ftype2 (re-frame/subscribe [:ftype2])
-        ftype3 (re-frame/subscribe [:ftype3])
-        f1 (nth @choices @ftype)
-        f2 (nth (:types f1) @ftype2)
-        f3 (nth (:types f2) @ftype3)
-        ]
-    (fn []
-      [h-box
-       :gap "10px"
-       :children [
-                  [h-box
-                   :gap "10px"
-                   :children [
-                              [label
-                               :label "It contains"
-                               :style {:margin-top "10px"}]
-                              [single-dropdown
-                               :choices @choices
-                               :model @ftype
-                               :on-change #(re-frame/dispatch [:ftype %])]
-                              (if f2
-                                [label
-                                 :label (:post f1)
-                                 :style {:margin-top "10px"}])
-                              (if f2
-                                [single-dropdown
-                                 :choices (:types f1)
-                                 :model @ftype2
-                                 :on-change #(re-frame/dispatch [:ftype2 %])])
-                              (if (:post f2)
-                                [label
-                                 :label (:post f2)
-                                 :style {:margin-top "10px"}])
-                              (if f3
-                                [single-dropdown
-                                 :model @ftype3
-                                 :on-change #(re-frame/dispatch [:ftype3 %])
-                                 :choices (:types f3)]
-                                [input-text
-                                 :model ""
-                                 :on-change #()])
-                              ]]
-                  ]
-       ])))
 
 (defn page-title []
   (let [name (re-frame/subscribe [:name])]

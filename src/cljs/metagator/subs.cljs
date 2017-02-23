@@ -43,6 +43,12 @@
    ))
 
 (re-frame/reg-sub
+ :meta-for-label
+ (fn [db [_ meta-label]]
+   (let [matches (filter #(= (:label %) meta-label) (:datatypes db))]
+     (first matches))))
+
+(re-frame/reg-sub
  :metas-for-cat
  (fn [db [_ cat-label]]
    (let [matches (filter #(= (:parent %) cat-label) (:datatypes db))]

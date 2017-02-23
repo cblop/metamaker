@@ -2,75 +2,75 @@
 
 (def datatypes
   [{:label "Start time"
-    :parent "time"
+    :parent "Time"
     :type :string
     :rdf "seas:measurementStart"}
    {:label "End time"
-    :parent "time"
+    :parent "Time"
     :type :string
     :rdf "seas:measurementEnd"}
    {:label "Timestamp"
-    :parent "time"
+    :parent "Time"
     :type :string
     :rdf "xsd:dateTimeStamp"}
    {:label "Device"
-    :parent "location"
+    :parent "Location"
     :type :string
     :rdf "seas:measurementSite"}
    {:label "Sensor"
-    :parent "location"
+    :parent "Location"
     :type :string
     :rdf "seas:measurementInstrument"}
    {:label "Room"
-    :parent "location"
+    :parent "Location"
     :type :string
     :rdf "seas:Room"}
    {:label "House"
-    :parent "location"
+    :parent "Location"
     :type :string
     :rdf "seas:House"}
    {:label "Appliance"
-    :parent "location"
+    :parent "Location"
     :type :string
     :rdf "seas:Appliance"}
    {:label "Value"
-    :parent "value"
+    :parent "Value"
     :type :float
     :rdf "seas:value"}
    {:label "Maximum Value"
-    :parent "value"
+    :parent "Value"
     :type :float
     :rdf "dm4t:maxValue"}
    {:label "Minimum Value"
-    :parent "value"
+    :parent "Value"
     :type :float
     :rdf "dm4t:minValue"}
    {:label "Mean Value"
-    :parent "value"
+    :parent "Value"
     :type :float
     :rdf "dm4t:meanValue"}
    {:label "Power (Watts)"
-    :parent "type"
+    :parent "Type"
     :type :float
     :rdf "seas:PowerQuantity"}
    {:label "Humidity (relative)"
-    :parent "type"
+    :parent "Type"
     :type :float
     :rdf "seas:relativeHumidity"}
    {:label "Gas"
-    :parent "type"
+    :parent "Type"
     :type :float
     :rdf "dm4t:GasReading"}
    {:label "CO2"
-    :parent "type"
+    :parent "Type"
     :type :float
     :rdf "dm4t:Co2Reading"}
    {:label "Light"
-    :parent "type"
+    :parent "Type"
     :type :float
     :rdf "dm4t:LightReading"}
    {:label "Motion (PIR)"
-    :parent "type"
+    :parent "Type"
     :type :float
     :rdf "dm4t:MotionReading"}
    ])
