@@ -88,6 +88,24 @@
      ;; db
      )))
 
+(defn drop-nth [coll n]
+  (keep-indexed #(if (not= %1 n) %2) coll))
+
+(re-frame/reg-event-db
+ :delete-row
+ (fn [db [_ row-id]]
+   (let [tab (:selected-tab db)]
+     (assoc-in db [:metas tab] (drop-nth (nth (:metas db) tab) row-id)))))
+
+(re-frame/reg-event-db
+ :set-label
+ (fn [db [_ label-data row-id]]
+   (let [tab (:selected-tab db)
+         ]
+     (assoc-in db [:metas tab row-id :label] label-data)
+     ;; db
+     )))
+
 (re-frame/reg-event-db
  :change-tab
  (fn [db [_ tab]]

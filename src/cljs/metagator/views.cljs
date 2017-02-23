@@ -1,6 +1,6 @@
 (ns metagator.views
   (:require [re-frame.core :as re-frame]
-            [re-com.core :refer [input-text input-textarea title v-box h-box gap label button single-dropdown horizontal-tabs vertical-pill-tabs]]
+            [re-com.core :refer [input-text input-textarea title v-box h-box gap label button single-dropdown horizontal-tabs vertical-pill-tabs md-circle-icon-button]]
             [reagent.core :as reagent]))
 
 (defn filename []
@@ -76,7 +76,8 @@
                         :choices catmap
                         ]]]
                      (if (:category m)
-                       (let [metafilter (re-frame/subscribe [:metas-for-cat (:category m)])]
+                       (let [metafilter (re-frame/subscribe [:metas-for-cat (:category m)])
+                             selected-meta (re-frame/subscribe [:selected-meta @metafilter i])]
                          [v-box
                           :width "30%"
                           :children
@@ -84,23 +85,30 @@
                            [label
                             :label "Metadata:"]
                            [single-dropdown
-                            :model 0
+                            :model @selected-meta
                             :on-change #(re-frame/dispatch [:set-metadata % (:category m) i])
                             :width "90%"
                             :choices @metafilter
                             ]]]))
-                     (if (:meta m)
+                     (if (:metadata m)
                        [v-box
                         :width "30%"
                         :children
                         [
                          [label
-                          :label "Label:"]
+                          :label "Label (optional):"]
                          [input-text
-                          :model ""
+                          :model (if (:label m) (:label m) "")
                           :on-change #(re-frame/dispatch [:set-label % i])
                           :width "90%"
                           ]]])
+                     [v-box
+                      :justify :end
+                      :children [
+                                 [button
+                                  :label "Delete"
+                                  :class "btn-danger"
+                                  :on-click #(re-frame/dispatch [:delete-row i])]]]
                      ]
           ])]
       )))

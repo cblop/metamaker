@@ -9,6 +9,7 @@
 (first (:datatypes @db))
 (def metas (re-frame/subscribe [:metas-for-cat "time"]))
 (def gmetas (re-frame/subscribe [:get-meta]))
+;; (def gmetas (re-frame/subscribe [:selected-meta [] 0]))
 (def cat-label (re-frame/subscribe [:cat-label 0]))
 
 @gmetas
