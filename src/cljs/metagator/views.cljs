@@ -8,7 +8,7 @@
     (fn []
       [input-text
        :model fname
-       :on-change #()
+       :on-change #(re-frame/dispatch [:fname-change %])
        :width "80%"])))
 
 (defn description []
@@ -24,11 +24,12 @@
                    :width "90%"]]])))
 
 (defn fbutton []
-  (fn []
-    [button
-     :label "Fetch"
-     :class "btn-primary"
-     :on-click #()]))
+  (let [fname (re-frame/subscribe [:fname])]
+    (fn []
+      [button
+       :label "Fetch"
+       :class "btn-primary"
+       :on-click #(re-frame/dispatch [:fetch @fname])])))
 
 (defn rows []
   (let [width "12.5%"]
@@ -204,101 +205,128 @@
                 [gap
                  :size "20px"]
                 [button
-                 :label "Add"
+                 :label "Add Metadata"
                  :class "btn-primary"
                  :on-click #()]
                 ]]))
 
 (defn rows-meta []
-  (let [types (re-frame/subscribe [:data-types])]
+  (let [types (re-frame/subscribe [:data-types])
+        metas (re-frame/subscribe [:get-meta])
+        cats (vec (set (map :parent @types)))
+        catmap (map (fn [x i] (hash-map :id i :label x)) cats (range (count cats)))
+        id-for-label (fn [label] (:id (first (filter #(= (:label %) label) catmap))))
+        ]
     (fn []
-      [h-box
-       :padding "20px"
-       :children [
-                  [v-box
-                   :width "30%"
-                   :children
-                   [
-                    [label
-                     :label "Category:"]
-                    [single-dropdown
-                     :model 0
-                     :on-change #()
-                     :width "30%"
-                     :choices (vec (set (map #(get % :parent) @types)))
-                     ]]]
-                  [v-box
-                   :width "30%"
-                   :children
-                   [
-                    [label
-                     :label "Sub-category:"]
-                    [single-dropdown
-                     :model 0
-                     :on-change #()
-                     :width "30%"
-                     :choices (vec (set (map #(get % :parent) @types)))
-                     ]]]
-                  [v-box
-                   :width "30%"
-                   :children
-                   [
-                    [label
-                     :label "Data type:"]
-                    [single-dropdown
-                     :model 0
-                     :on-change #()
-                     :width "30%"
-                     :choices (vec (set (map #(get % :parent) @types)))
-                     ]]]
-                  ]
-       ]
+      [:div
+       (for [[i m] (map-indexed vector @metas)]
+         [h-box
+          :padding "20px"
+          :style {:background-color "#eef"
+                  :margin-bottom "10px"}
+          :children [
+                     [v-box
+                      :width "40%"
+                      :children
+                      [
+                       [label
+                        :label "Category:"]
+                       [single-dropdown
+                        :model (id-for-label (:category m))
+                        :on-change #(re-frame/dispatch [:set-category % i])
+                        :width "90%"
+                        :choices catmap
+                        ]]]
+                     (if (:category m)
+                       (let [metafilter (re-frame/subscribe [:metas-for-cat (:category m)])]
+                         [v-box
+                          :width "40%"
+                          :children
+                          [
+                           [label
+                            :label "Metadata:"]
+                           [single-dropdown
+                            :model 0
+                            :on-change #(re-frame/dispatch [:set-meta % i])
+                            :width "90%"
+                            :choices @metafilter
+                            ]]]))
+                     ;; [v-box
+                     ;;  :width "30%"
+                     ;;  :children
+                     ;;  [
+                     ;;   [label
+                     ;;    :label "Metadata:"]
+                     ;;   [single-dropdown
+                     ;;    :model 0
+                     ;;    :on-change #()
+                     ;;    :width "90%"
+                     ;;    :choices catmap
+                     ;;    ]]]
+                     ]
+          ])]
       )))
+
+(defn dtype []
+  (let [selected (re-frame/subscribe [:selected-tab])
+        types (re-frame/subscribe [:types])
+        type (re-frame/subscribe [:selected-type])]
+    (fn []
+      [v-box
+       ;; :padding "20px"
+       :width "100%"
+       :children [
+                  [title
+                   :level :level3
+                   :label "Data Type:"]
+                  [single-dropdown
+                   :model @type
+                   :width "40%"
+                   :style (if @type {:background-color "#bbffbb"
+                                     :padding "5px"} {:padding "5px"})
+                   :on-change #(re-frame/dispatch [:update-type %])
+                   :choices @types]
+                  ]])))
 
 (defn column []
   (fn []
     [v-box
      :padding "20px"
      :children [
+                [dtype]
+                ;; [metadata]
+                [gap
+                 :size "20px"]
                 [title
                  :level :level3
-                 :label "Column Metadata:"]
-                [label
-                 :label "This metadata describes the type of values in each row of the column."]
+                 :label "Metadata:"]
+                [rows-meta]
                 [gap
                  :size "20px"]
                 [button
-                 :label "Add"
+                 :label "Add Metadata"
                  :class "btn-primary"
-                 :on-click #()]
-                [rows-meta]
+                 :on-click #(re-frame/dispatch [:add-meta])]
                 ]]))
 
 (defn columns []
-  (fn []
-    [v-box
-     :width "90%"
-     :children [
-                [title
-                 :level :level2
-                 :label "Table:"]
-                [gap
-                 :size "10px"]
-                [metadata]
-                [gap
-                 :size "20px"]
-                [horizontal-tabs
-                 :model (reagent/atom ::tab1)
-                 :tabs [
-                        {:id ::tab1 :label "Time"}
-                        {:id ::tab2 :label "Unix"}
-                        {:id ::tab3 :label "Appliance_1"}
-                        {:id ::tab4 :label "Appliance_2"}
-                        {:id ::tab5 :label "Appliance_3"}
-                        ]
-                 :on-change #()]
-                [column]
-                ]]))
+  (let [headers (re-frame/subscribe [:row-tabs])
+        selected (re-frame/subscribe [:selected-tab])]
+    (fn []
+      [v-box
+       :width "90%"
+       :children [
+                  [gap
+                   :size "20px"]
+                  [metadata]
+                  [gap
+                   :size "40px"]
+                  [horizontal-tabs
+                   :model @selected
+                   :tabs @headers
+                   :on-change #(re-frame/dispatch [:change-tab %])]
+                  [column]
+                  ]])))
 
 (defn file-type []
   (let [choices (re-frame/subscribe [:ftypes])
@@ -367,37 +395,40 @@
                  :class "btn-success"]]]))
 
 (defn main-panel []
-  (fn []
-    [v-box
-     :height "100%"
-     :gap "20px"
-     :children [
-                [h-box
-                 :justify :center
-                 :children [
-                            [page-title]]]
-                [v-box
-                 :margin "0 0 0 15%"
-                 :gap "10px"
-                 :children
-                 [
-                  [label
-                   :label "Path to remote CSV file:"]
+  (let [heads (re-frame/subscribe [:row-tabs])]
+    (fn []
+      [v-box
+       :height "100%"
+       :gap "20px"
+       :children [
                   [h-box
-                   :gap "5px"
+                   :justify :center
                    :children [
-                              [filename]
-                              [fbutton]]]
-                  ;; [gap
-                  ;;  :size "10px"]
-                  ;; [file-type]
-                  [gap
-                   :size "10px"]
-                  [description]
-                  [columns]
-                  [gap
-                   :size "20px"]
-                  [go-button]
-                  ]
-                 ]
-                ]]))
+                              [page-title]]]
+                  [v-box
+                   :margin "0 0 0 15%"
+                   :gap "10px"
+                   :children
+                   [
+                    [label
+                     :label "Path to remote CSV file:"]
+                    [h-box
+                     :gap "5px"
+                     :children [
+                                [filename]
+                                [fbutton]]]
+                    ;; [gap
+                    ;;  :size "10px"]
+                    ;; [file-type]
+                    [gap
+                     :size "10px"]
+                    [description]
+                    (if @heads
+                      [:div
+                       [columns]
+                       [gap
+                        :size "20px"]
+                       [go-button]])
+                    ]
+                   ]
+                  ]])))
