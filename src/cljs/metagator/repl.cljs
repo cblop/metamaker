@@ -3,6 +3,11 @@
             [re-frame.core :as re-frame]))
 
 (def db (re-frame/subscribe [:db]))
+
+(:metas @db)
+
+(:datatypes @db)
+
 (:datatypes @db)
 (vec (set (map #(get % :parent) (:data-types @db))))
 (map :parent (:datatypes @db))

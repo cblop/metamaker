@@ -25,6 +25,10 @@
  (fn [db [_ fname]]
    (assoc db :fname fname)))
 
+(re-frame/reg-event-db
+ :dname-change
+ (fn [db [_ dname]]
+   (assoc db :dataset-name dname)))
 
 (re-frame/reg-event-db
  :fetch
@@ -38,6 +42,11 @@
  (fn [db [_ rows]]
    (let [types (map detect-type (first rows))]
      (assoc db :row-types types))))
+
+(re-frame/reg-event-db
+ :update-description
+ (fn [db [_ description]]
+   (assoc db :description description)))
 
 (re-frame/reg-event-db
  :update-type
@@ -62,31 +71,56 @@
  :add-meta
  (fn [db _]
    (let [tab (:selected-tab db)]
-     (assoc-in db [:metas tab] (conj (nth (:metas db) tab) {:category nil :metadata nil})))))
+     (assoc-in db [:metas tab] (conj (nth (:metas db) tab) {:cat-a nil :cat-b nil :cat-c nil :label nil})))))
 
 (re-frame/reg-event-db
  :add-file-meta
  (fn [db _]
-   (assoc db :file-metas (conj (:file-metas db) {:category nil :metadata nil}))))
+   (assoc db :file-metas (conj (:file-metas db) {:cat-a nil :cat-b nil :cat-c nil :label nil}))))
 
 (re-frame/reg-event-db
- :set-category
+ :set-cat-a
  (fn [db [_ cat-id row-id]]
    (let [tab (:selected-tab db)
          cat-label (re-frame/subscribe [:cat-label cat-id])]
-     (assoc-in db [:metas tab row-id :category] @cat-label))))
+     (assoc-in db [:metas tab row-id :cat-a] @cat-label))))
+
+(re-frame/reg-event-db
+ :set-cat-b
+ (fn [db [_ cat-b cat-a row-id]]
+   (let [tab (:selected-tab db)
+         cat-bs (re-frame/subscribe [:cat-b-for-cat-a cat-a])
+         cat-label (:label (nth @cat-bs cat-b))
+         ]
+     (assoc-in db [:metas tab row-id :cat-b] cat-label))))
+
+(re-frame/reg-event-db
+ :set-cat-c
+ (fn [db [_ cat-c cat-b row-id]]
+   (let [tab (:selected-tab db)
+         cat-cs (re-frame/subscribe [:cat-c-for-cat-b cat-b])
+         cat-label (:label (nth @cat-cs cat-c))
+         ]
+     (assoc-in db [:metas tab row-id :cat-c] cat-label))))
+
+(re-frame/reg-event-db
+ :set-file-cat-a
+ (fn [db [_ cat-id row-id]]
+   (let [cat-label (re-frame/subscribe [:cat-label cat-id])]
+     (assoc-in db [:file-metas row-id :cat-a] @cat-label))))
 
 
 (re-frame/reg-event-db
- :set-file-category
- (fn [db [_ cat-id row-id]]
+ :set-file-cat-b
+ (fn [db [_ cat-id cat-a row-id]]
    (let [cat-label (re-frame/subscribe [:cat-label cat-id])]
-     (assoc-in db [:file-metas row-id :category] @cat-label))))
+     (assoc-in db [:file-metas row-id :cat-b] @cat-label))))
 
-;; (re-frame/reg-event-db
-;;  :set-metadata
-;;  (fn [db _]
-;;    db))
+(re-frame/reg-event-db
+ :set-file-cat-c
+ (fn [db [_ cat-id cat-b row-id]]
+   (let [cat-label (re-frame/subscribe [:cat-label cat-id])]
+     (assoc-in db [:file-metas row-id :cat-c] @cat-label))))
 
 (re-frame/reg-event-db
  :set-metadata
@@ -164,8 +198,12 @@
      (assoc db :rows (rest rows)))))
 
 
-
 (re-frame/reg-event-db
- :ftype3
- (fn [db [_ type]]
-   (assoc db :ftype3 type)))
+ :create-metadata
+ (fn [db _]
+   (let [metas (map :metadata (:metas db))
+         hmap {:name (:name db)
+               :description (:description db)
+               :url (:fname db)
+               :columns []
+               }])))

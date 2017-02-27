@@ -1,88 +1,408 @@
 (ns metagator.db)
 
 (def datatypes
-  [{:label "Start time"
-    :parent "Time"
+  [{:cat-b "Start time"
+    :cat-a "Time"
     :type :string
-    :rdf "seas:measurementStart"}
-   {:label "End time"
-    :parent "Time"
+    :p "seas:measurementStart"
+    }
+   {:cat-b "End time"
+    :cat-a "Time"
     :type :string
-    :rdf "seas:measurementEnd"}
-   {:label "Timestamp"
-    :parent "Time"
+    :p "seas:measurementEnd"}
+   {:cat-b "Timestamp"
+    :cat-a "Time"
     :type :string
-    :rdf "xsd:dateTimeStamp"}
-   {:label "Device"
-    :parent "Location"
+    :p "xsd:dateTimeStamp"}
+   {:cat-b "Device"
+    :cat-a "Location"
     :type :string
-    :rdf "seas:measurementSite"}
-   {:label "Sensor"
-    :parent "Location"
+    :p "seas:measurementSite"}
+   {:cat-b "Sensor"
+    :cat-a "Location"
     :type :string
-    :rdf "seas:measurementInstrument"}
-   {:label "Room"
-    :parent "Location"
+    :p "seas:measurementInstrument"}
+   {:cat-c "Bedroom"
+    :cat-b "Room"
+    :cat-a "Location"
     :type :string
-    :rdf "seas:Room"}
-   {:label "House"
-    :parent "Location"
+    :p "rdf:a"
+    :o "seas:Room"}
+   {:cat-c "Bathroom"
+    :cat-b "Room"
+    :cat-a "Location"
     :type :string
-    :rdf "seas:House"}
-   {:label "Appliance"
-    :parent "Location"
+    :p "rdf:a"
+    :o "seas:Room"}
+   {:cat-c "Kitchen"
+    :cat-b "Room"
+    :cat-a "Location"
     :type :string
-    :rdf "seas:Appliance"}
-   {:label "Value"
-    :parent "Value"
+    :p "rdf:a"
+    :o "seas:Room"}
+   {:cat-c "Living Room"
+    :cat-b "Room"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Room"}
+   {:cat-b "House"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:House"}
+   {:cat-c "Washer Dryer"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Toaster"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Desktop Computer"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Kettle"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Microwave"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Dishwasher"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Television"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Fridge-Freezer"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Air Conditioner"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Electric Heater"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Air Conditioner"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Tumble Dryer"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Washing Machine"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Freezer"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-c "Fridge"
+    :cat-b "Appliance"
+    :cat-a "Location"
+    :type :string
+    :p "rdf:a"
+    :o "seas:Appliance"}
+   {:cat-b "Value"
+    :cat-a "Value"
     :type :float
-    :rdf "seas:value"}
-   {:label "Maximum Value"
-    :parent "Value"
+    :p "seas:value"}
+   {:cat-b "Maximum Value"
+    :cat-a "Value"
     :type :float
-    :rdf "dm4t:maxValue"}
-   {:label "Minimum Value"
-    :parent "Value"
+    :p "dm4t:maxValue"}
+   {:cat-b "Minimum Value"
+    :cat-a "Value"
     :type :float
-    :rdf "dm4t:minValue"}
-   {:label "Mean Value"
-    :parent "Value"
+    :p "dm4t:minValue"}
+   {:cat-b "Mean Value"
+    :cat-a "Value"
     :type :float
-    :rdf "dm4t:meanValue"}
-   {:label "Power (Watts)"
-    :parent "Type"
+    :p "dm4t:meanValue"}
+   {:cat-b "Power (Watts)"
+    :cat-a "Type"
     :type :float
-    :rdf "seas:PowerQuantity"}
-   {:label "Humidity (relative)"
-    :parent "Type"
+    :p "rdf:a"
+    :o "seas:PowerQuantity"}
+   {:cat-b "Humidity (relative)"
+    :cat-a "Type"
     :type :float
-    :rdf "seas:relativeHumidity"}
-   {:label "Gas"
-    :parent "Type"
+    :p "rdf:a"
+    :o "seas:RelativeHumidity"}
+   {:cat-b "Gas"
+    :cat-a "Type"
     :type :float
-    :rdf "dm4t:GasReading"}
-   {:label "CO2"
-    :parent "Type"
+    :p "rdf:a"
+    :o "dm4t:GasReading"}
+   {:cat-b "CO2"
+    :cat-a "Type"
     :type :float
-    :rdf "dm4t:Co2Reading"}
-   {:label "Light"
-    :parent "Type"
+    :p "rdf:a"
+    :o "dm4t:Co2Reading"}
+   {:cat-b "Light"
+    :cat-a "Type"
     :type :float
-    :rdf "dm4t:LightReading"}
-   {:label "Motion (PIR)"
-    :parent "Type"
+    :p "rdf:a"
+    :o "dm4t:LightReading"}
+   {:cat-b "Motion (PIR)"
+    :cat-a "Type"
     :type :float
-    :rdf "dm4t:MotionReading"}
+    :p "rdf:a"
+    :o "dm4t:MotionReading"}
    ])
 
 (def default-db
   {:name "MetaMaker"
+   :dname "refit-house1"
    :fname "http://mist.cs.bath.ac.uk/refit-cleaned/CLEAN_House1.csv"
    :description "Data collected as part of the REFIT project at the University of Strathclyde"
    :selected-tab 0
-   :datatypes datatypes
+   :datatypes [{:cat-b "Start time"
+                :cat-a "Time"
+                :type :string
+                :p "seas:measurementStart"
+                }
+               {:cat-b "End time"
+                :cat-a "Time"
+                :type :string
+                :p "seas:measurementEnd"}
+               {:cat-b "Timestamp"
+                :cat-a "Time"
+                :type :string
+                :p "xsd:dateTimeStamp"}
+               {:cat-b "Device"
+                :cat-a "Location"
+                :type :string
+                :p "seas:measurementSite"}
+               {:cat-b "Sensor"
+                :cat-a "Location"
+                :type :string
+                :p "seas:measurementInstrument"}
+               {:cat-c "Bedroom"
+                :cat-b "Room"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Room"}
+               {:cat-c "Bathroom"
+                :cat-b "Room"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Room"}
+               {:cat-c "Kitchen"
+                :cat-b "Room"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Room"}
+               {:cat-c "Living Room"
+                :cat-b "Room"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Room"}
+               {:cat-b "House"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:House"}
+               {:cat-c "Washer Dryer"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Toaster"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Desktop Computer"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Kettle"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Microwave"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Dishwasher"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Television"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Fridge-Freezer"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Air Conditioner"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Electric Heater"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Air Conditioner"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Tumble Dryer"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Washing Machine"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Freezer"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-c "Fridge"
+                :cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-b "Value"
+                :cat-a "Value"
+                :type :float
+                :p "seas:value"}
+               {:cat-b "Room"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Room"}
+               {:cat-b "House"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:House"}
+               {:cat-b "Appliance"
+                :cat-a "Location"
+                :type :string
+                :p "rdf:a"
+                :o "seas:Appliance"}
+               {:cat-b "Value"
+                :cat-a "Value"
+                :type :float
+                :p "seas:value"}
+               {:cat-b "Maximum Value"
+                :cat-a "Value"
+                :type :float
+                :p "dm4t:maxValue"}
+               {:cat-b "Minimum Value"
+                :cat-a "Value"
+                :type :float
+                :p "dm4t:minValue"}
+               {:cat-b "Mean Value"
+                :cat-a "Value"
+                :type :float
+                :p "dm4t:meanValue"}
+               {:cat-b "Power (Watts)"
+                :cat-a "Type"
+                :type :float
+                :p "rdf:a"
+                :o "seas:PowerQuantity"}
+               {:cat-b "Humidity (relative)"
+                :cat-a "Type"
+                :type :float
+                :p "rdf:a"
+                :o "seas:RelativeHumidity"}
+               {:cat-b "Gas"
+                :cat-a "Type"
+                :type :float
+                :p "rdf:a"
+                :o "dm4t:GasReading"}
+               {:cat-b "CO2"
+                :cat-a "Type"
+                :type :float
+                :p "rdf:a"
+                :o "dm4t:Co2Reading"}
+               {:cat-b "Light"
+                :cat-a "Type"
+                :type :float
+                :p "rdf:a"
+                :o "dm4t:LightReading"}
+               {:cat-b "Motion (PIR)"
+                :cat-a "Type"
+                :type :float
+                :p "rdf:a"
+                :o "dm4t:MotionReading"}
+               ]
    :metas []
    :file-metas []
    :types [{:id 0 :label "String"} {:id 1 :label "Number"} {:id 2 :label "Date"}]
    }
-   )
+  )

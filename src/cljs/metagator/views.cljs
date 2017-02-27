@@ -11,6 +11,18 @@
        :on-change #(re-frame/dispatch [:fname-change %])
        :width "80%"])))
 
+(defn dataset-name []
+  (let [dname (re-frame/subscribe [:dname])]
+    (fn []
+      [v-box
+       :gap "10px"
+       :children [[label
+                   :label "Name of the dataset:"]
+                  [input-text
+                   :model dname
+                   :on-change #(re-frame/dispatch [:dname-change %])
+                   :width "40%"]]])))
+
 (defn description []
   (let [description (re-frame/subscribe [:description])]
     (fn []
@@ -20,7 +32,7 @@
                    :label "Description of the dataset:"]
                   [input-textarea
                    :model description
-                   :on-change #()
+                   :on-change #(re-frame/dispatch [:update-description])
                    :width "90%"]]])))
 
 (defn fbutton []
@@ -31,12 +43,10 @@
        :class "btn-primary"
        :on-click #(re-frame/dispatch [:fetch @fname])])))
 
-
-
 (defn rows-meta [type]
   (let [types (re-frame/subscribe [:data-types])
         metas (if (= type :file) (re-frame/subscribe [:get-file-meta]) (re-frame/subscribe [:get-meta]))
-        cats (vec (set (map :parent @types)))
+        cats (vec (set (map :cat-a @types)))
         file (if (= type :file) true false)
         catmap (map (fn [x i] (hash-map :id i :label x)) cats (range (count cats)))
         id-for-label (fn [label] (:id (first (filter #(= (:label %) label) catmap))))
@@ -50,33 +60,49 @@
                   :margin-bottom "10px"}
           :children [
                      [v-box
-                      :width "30%"
+                      :width "20%"
                       :children
                       [
                        [label
                         :label "Category:"]
                        [single-dropdown
-                        :model (id-for-label (:category m))
-                        :on-change (if file #(re-frame/dispatch [:set-file-category % i]) #(re-frame/dispatch [:set-category % i]))
+                        :model (id-for-label (:cat-a m))
+                        :on-change (if file #(re-frame/dispatch [:set-file-cat-a % i]) #(re-frame/dispatch [:set-cat-a % i]))
                         :width "90%"
                         :choices catmap
                         ]]]
-                     (if (:category m)
-                       (let [metafilter (re-frame/subscribe [:metas-for-cat (:category m)])
-                             selected-meta (if file (re-frame/subscribe [:selected-file-meta @metafilter i]) (re-frame/subscribe [:selected-meta @metafilter i]))]
+                     (if (:cat-a m)
+                       (let [cat-b-filter (re-frame/subscribe [:cat-b-for-cat-a (:cat-a m)])
+                             selected-cat-b (if file (re-frame/subscribe [:selected-file-cat-b @cat-b-filter i]) (re-frame/subscribe [:selected-cat-b @cat-b-filter i]))]
                          [v-box
-                          :width "30%"
+                          :width "20%"
                           :children
                           [
                            [label
-                            :label "Metadata:"]
+                            :label "Sub-category:"]
                            [single-dropdown
-                            :model @selected-meta
-                            :on-change (if file #(re-frame/dispatch [:set-file-metadata % (:category m) i]) #(re-frame/dispatch [:set-metadata % (:category m) i]))
+                            :model @selected-cat-b
+                            :on-change (if file #(re-frame/dispatch [:set-file-cat-b % (:cat-a m) i]) #(re-frame/dispatch [:set-cat-b % (:cat-a m) i]))
                             :width "90%"
-                            :choices @metafilter
+                            :choices @cat-b-filter
                             ]]]))
-                     (if (:metadata m)
+                     (if (:cat-b m)
+                       (let [cat-c-filter (re-frame/subscribe [:cat-c-for-cat-b (:cat-b m)])
+                             selected-cat-c (if file (re-frame/subscribe [:selected-file-cat-c @cat-c-filter i]) (re-frame/subscribe [:selected-cat-c @cat-c-filter i]))]
+                         (if (seq @cat-c-filter)
+                           [v-box
+                            :width "20%"
+                            :children
+                            [
+                             [label
+                              :label "Sub-sub-category:"]
+                             [single-dropdown
+                              :model @selected-cat-c
+                              :on-change (if file #(re-frame/dispatch [:set-file-cat-c % (:cat-b m) i]) #(re-frame/dispatch [:set-cat-c % (:cat-b m) i]))
+                              :width "90%"
+                              :choices @cat-c-filter
+                              ]]])))
+                     (if (:cat-c m)
                        [v-box
                         :width "30%"
                         :children
@@ -193,6 +219,7 @@
     [h-box
      :justify :center
      :width "80%"
+     :margin "0 0 50px 0"
      :children [
                 [button
                  :style {:width "200px"}
@@ -222,9 +249,9 @@
                      :children [
                                 [filename]
                                 [fbutton]]]
-                    ;; [gap
-                    ;;  :size "10px"]
-                    ;; [file-type]
+                    [gap
+                     :size "10px"]
+                    [dataset-name]
                     [gap
                      :size "10px"]
                     [description]

@@ -8,6 +8,10 @@
  (fn [db]
    (:name db)))
 
+(re-frame/reg-sub
+ :dname
+ (fn [db]
+   (:dname db)))
 
 (re-frame/reg-sub
  :db
@@ -34,7 +38,7 @@
 (re-frame/reg-sub
  :cat-label
  (fn [db [_ id]]
-   (let [cats (vec (set (map :parent (:datatypes db))))
+   (let [cats (vec (set (map :cat-a (:datatypes db))))
          catmap (map (fn [x i] (hash-map :id i :label x)) cats (range (count cats)))
          label-for-id (fn [id] (:label (first (filter #(= (:id %) id) catmap))))]
      (label-for-id id)
@@ -49,13 +53,20 @@
      (first matches))))
 
 (re-frame/reg-sub
- :metas-for-cat
+ :cat-b-for-cat-a
  (fn [db [_ cat-label]]
-   (let [matches (filter #(= (:parent %) cat-label) (:datatypes db))]
-     (map (fn [x i] (hash-map :id i :label x)) (map :label matches) (range (count matches))))
-   ;; cat-label
-   ;; (map (fn [x i] (hash-map :id i :label x)) (map :label (filter #(= (:parent %) cat-label) (:datatypes db))))
-   ;; (map (fn [x i]))(:datatypes db)
+   (let [matches (filter #(= (:cat-a %) cat-label) (:datatypes db))]
+     (map (fn [x i] (hash-map :id i :label x)) (vec (set (map :cat-b matches))) (range (count matches))))
+   ))
+
+
+(re-frame/reg-sub
+ :cat-c-for-cat-b
+ (fn [db [_ cat-label]]
+   (let [matches (filter #(= (:cat-b %) cat-label) (:datatypes db))
+         ]
+     (if (seq (remove nil? (map :cat-c matches)))
+       (map (fn [x i] (hash-map :id i :label x)) (map :cat-c matches) (range (count matches)))))
    ))
 
 (re-frame/reg-sub
@@ -70,20 +81,40 @@
    (:file-metas db)))
 
 (re-frame/reg-sub
- :selected-meta
+ :selected-cat-b
  (fn [db [_ metas i]]
    (let [metam (re-frame/subscribe [:get-meta]) ; metadata for all rows
-         m (:label (:metadata (nth @metam i))) ; metadata label for this row
+         m (:cat-b (nth @metam i)) ; metadata label for this row
          match (:id (first (filter #(= m (:label %)) metas))) ; index of metadata label in dropdown that matches
          ]
      match
      )))
 
 (re-frame/reg-sub
- :selected-file-meta
+ :selected-file-cat-b
  (fn [db [_ metas i]]
    (let [metam (re-frame/subscribe [:get-file-meta]) ; metadata for all rows
-         m (:label (:metadata (nth @metam i))) ; metadata label for this row
+         m (:cat-b (:metadata (nth @metam i))) ; metadata label for this row
+         match (:id (first (filter #(= m (:label %)) metas))) ; index of metadata label in dropdown that matches
+         ]
+     match
+     )))
+
+(re-frame/reg-sub
+ :selected-cat-c
+ (fn [db [_ metas i]]
+   (let [metam (re-frame/subscribe [:get-meta]) ; metadata for all rows
+         m (:cat-c (nth @metam i)) ; metadata label for this row
+         match (:id (first (filter #(= m (:label %)) metas))) ; index of metadata label in dropdown that matches
+         ]
+     match
+     )))
+
+(re-frame/reg-sub
+ :selected-file-cat-c
+ (fn [db [_ metas i]]
+   (let [metam (re-frame/subscribe [:get-file-meta]) ; metadata for all rows
+         m (:cat-c (:metadata (nth @metam i))) ; metadata label for this row
          match (:id (first (filter #(= m (:label %)) metas))) ; index of metadata label in dropdown that matches
          ]
      match
