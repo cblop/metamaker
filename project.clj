@@ -10,12 +10,12 @@
                  [ns-tracker "0.3.0"]]
 
 
-  :plugins [[lein-cljsbuild "1.1.4"]
+  :plugins [[lein-cljsbuild "1.1.5"]
             [lein-garden "0.2.8"]]
 
   :min-lein-version "2.5.3"
 
-  :source-paths ["src/clj"]
+  :source-paths ["src/cljs"]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "resources/public/css"]

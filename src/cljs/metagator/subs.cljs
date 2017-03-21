@@ -2,7 +2,6 @@
     (:require-macros [reagent.ratom :refer [reaction]])
     (:require [re-frame.core :as re-frame]))
 
-
 (re-frame/reg-sub
  :name
  (fn [db]
@@ -11,7 +10,7 @@
 (re-frame/reg-sub
  :dname
  (fn [db]
-   (:dname db)))
+   (:dataset-name db)))
 
 (re-frame/reg-sub
  :db
@@ -133,6 +132,21 @@
  :data-types
  (fn [db]
    (:datatypes db)))
+
+(defn match-meta [a b]
+  (and
+   (= (:label a) (:label b))
+   (= (:cat-c a) (:cat-c b))
+   (= (:cat-b a) (:cat-b b))
+   (= (:cat-a a) (:cat-a b))
+   ))
+
+(re-frame/reg-sub
+ :p-for-meta
+ (fn [db [_ meta]]
+   (let [matches (filter #(match-meta meta %) (:datatypes db))
+         p (:p (first matches))]
+     p)))
 
 (re-frame/reg-sub
  :types

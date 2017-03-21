@@ -16,13 +16,15 @@
 (defn complete [results, parser]
   (let [clj-results (:data (js->clj results :keywordize-keys true))]
     (do
-      (println (str "Table data:" clj-results))
+      (println (str "Table data:" (js->clj results :keywordize-keys true)))
       (re-frame/dispatch [:set-rows clj-results])
       )))
 
+
 (defn parse-sample [fname size]
   (.parse js/Papa fname
-          (clj->js {:download true
+          (clj->js {
+                    :download false
                     :dynamicTyping true
                     ;; :step stepfn
                     :complete complete

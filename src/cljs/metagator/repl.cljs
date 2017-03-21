@@ -4,6 +4,8 @@
 
 (def db (re-frame/subscribe [:db]))
 
+(:url @db)
+
 (:metas @db)
 
 (:datatypes @db)

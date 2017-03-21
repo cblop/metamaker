@@ -1,6 +1,7 @@
 (ns metagator.events
     (:require [re-frame.core :as re-frame]
               [metagator.parser :as parser]
+              [metagator.meta :refer [make-triples]]
               [metagator.types :refer [detect-type]]
               [metagator.db :as db]))
 
@@ -31,10 +32,18 @@
    (assoc db :dataset-name dname)))
 
 (re-frame/reg-event-db
+ :upload-file
+ (fn [db [_ fname]]
+   (let [url (first (array-seq (.-files (.getElementById js/document "file"))))]
+     (do
+       (parser/parse-sample url 10)
+       (assoc db :url (str "http://www.cs.bath.ac.uk/dm4t/" (.-name url)))))))
+
+(re-frame/reg-event-db
  :fetch
  (fn [db [_ fname]]
    (do
-     (parser/parse-sample fname 100)
+     (parser/parse-sample fname 10)
      db)))
 
 (re-frame/reg-event-db
@@ -202,8 +211,10 @@
  :create-metadata
  (fn [db _]
    (let [metas (map :metadata (:metas db))
-         hmap {:name (:name db)
+         hmap {:name (:dataset-name db)
                :description (:description db)
-               :url (:fname db)
-               :columns []
-               }])))
+               :url (:url db)
+               :columns (:metas db)
+               }]
+     (println (make-triples hmap))
+     db)))

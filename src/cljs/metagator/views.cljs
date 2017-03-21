@@ -11,6 +11,14 @@
        :on-change #(re-frame/dispatch [:fname-change %])
        :width "80%"])))
 
+(defn localfile []
+  (let [fname (re-frame/subscribe [:fname])]
+    (fn []
+      [:input {:type "file" :id "file" :name "file"
+               :on-change #(re-frame/dispatch [:upload-file %])}])))
+
+
+
 (defn dataset-name []
   (let [dname (re-frame/subscribe [:dname])]
     (fn []
@@ -224,6 +232,7 @@
                 [button
                  :style {:width "200px"}
                  :label "Create Metadata!"
+                 :on-click #(re-frame/dispatch [:create-metadata])
                  :class "btn-success"]]]))
 
 (defn main-panel []
@@ -243,12 +252,19 @@
                    :children
                    [
                     [label
-                     :label "Path to remote CSV file:"]
+                     :label "Path to local CSV file:"]
                     [h-box
                      :gap "5px"
                      :children [
-                                [filename]
-                                [fbutton]]]
+                                [localfile]
+                                ]]
+                    ;; [label
+                    ;;  :label "Path to remote CSV file:"]
+                    ;; [h-box
+                    ;;  :gap "5px"
+                    ;;  :children [
+                    ;;             [filename]
+                    ;;             [fbutton]]]
                     [gap
                      :size "10px"]
                     [dataset-name]
