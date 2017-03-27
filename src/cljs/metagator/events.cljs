@@ -1,9 +1,12 @@
 (ns metagator.events
     (:require [re-frame.core :as re-frame]
+              [ajax.core :refer [GET POST]]
               [metagator.parser :as parser]
               [metagator.meta :refer [make-triples]]
               [metagator.types :refer [detect-type]]
               [metagator.db :as db]))
+
+(def HOST "http://mist.cs.bath.ac.uk:3000")
 
 (re-frame/reg-event-db
  :initialize-db
@@ -206,6 +209,11 @@
      (re-frame/dispatch [:set-types (rest rows)])
      (assoc db :rows (rest rows)))))
 
+(defn load-turtle-handler [data]
+  (println data))
+
+(defn bad-response [data]
+  (println data))
 
 (re-frame/reg-event-db
  :create-metadata
@@ -217,4 +225,13 @@
                :columns (:metas db)
                }]
      (println (make-triples hmap))
+     (POST (str HOST "/add/") {:params {:file (make-triples hmap)}
+                               :headers {:content-type "text/turtle"
+                                         :access-control-allow-origin "*"
+                                         :access-control-allow-methods "GET, POST"
+                                         :access-control-allow-headers "X-Custom-Header"
+                                         }
+                               :format :json
+                               :handler #(re-frame/dispatch [:load-turtle-handler %1])
+                               :bad-response #(re-frame/dispatch [:bad-response %1])})
      db)))
