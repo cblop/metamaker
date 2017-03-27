@@ -1,0 +1,13 @@
+timestamp,house,room,appliance,sensor,value
+2017-03-07 17:54,8,"living room","lamp",321,43.12
+2017-03-07 17:55,2,"living room","lamp",321,84.99
+2017-03-07 17:56,3,"living room","lamp",321,0.33
+2017-03-07 17:57,4,"living room","lamp",321,33.23
+2017-03-07 17:58,3,"kitchen","fridge",22,4.32
+2017-03-07 17:59,8,"kitchen","fridge",22,99.94
+2017-03-07 18:00,9,"kitchen","fridge",22,23.44
+2017-03-07 18:01,1,"kitchen","fridge",22,21.42
+2017-03-07 18:02,2,"bathroom","shower",1,87.82
+2017-03-07 18:03,4,"bathroom","shower",1,35.32
+2017-03-07 18:04,8,"bathroom","shower",1,98.53
+2017-03-07 18:05,1,"bathroom","shower",1,90.11
