@@ -209,11 +209,41 @@
      (re-frame/dispatch [:set-types (rest rows)])
      (assoc db :rows (rest rows)))))
 
-(defn load-turtle-handler [data]
-  (println data))
+(re-frame/reg-event-db
+ :load-turtle-handler
+ (fn [db [_ response]]
+   (println response)
+   db))
 
-(defn bad-response [data]
-  (println data))
+(re-frame/reg-event-db
+ :bad-response
+ (fn [db [_ response]]
+   (println response)
+   db))
+
+(defn download [fname text]
+  (let [element (.createElement js/document "a")
+        ]
+    (do
+      (.setAttribute element "href" (str "data:text/plain;charset=utf-8," (js/encodeURIComponent text)))
+      (.setAttribute element "download" fname)
+      (set! (.-display (.-style element)) "none")
+      (.appendChild (.-body js/document) element)
+      (.click element)
+      (.removeChild (.-body js/document) element)
+      )))
+
+(re-frame/reg-event-db
+ :download-turtle
+ (fn [db _]
+   (let [hmap {:name (:dataset-name db)
+               :description (:description db)
+               :url (:url db)
+               :columns (:metas db)
+               }]
+     (download (str (:dataset-name db) ".ttl") (make-triples hmap)))
+
+   db))
 
 (re-frame/reg-event-db
  :create-metadata
@@ -226,7 +256,7 @@
                }]
      (println (make-triples hmap))
      (POST (str HOST "/add/") {:params {:file (make-triples hmap)}
-                               :headers {:content-type "text/turtle"
+                               :headers {:content-type "application/json"
                                          :access-control-allow-origin "*"
                                          :access-control-allow-methods "GET, POST"
                                          :access-control-allow-headers "X-Custom-Header"

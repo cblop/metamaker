@@ -29,9 +29,11 @@
         dcterms (prefixer "dcterms" DC)
         xsd (prefixer "xsd" XSD)
         seas (prefixer "seas" "https://w3id.org/seas#")
-        ssn (prefixer "ssn" "http://purl.oclc.org/NET/ssnx/ssn#")]
+        dm4t (prefixer "dm4t" "http://www.cs.bath.ac.uk/dm4t#")
+        ssn (prefixer "ssn" "http://purl.oclc.org/NET/ssnx/ssn#")
+        prefix (str "@prefix: <http://www.cs.bath.ac.uk/dm4t/dataset/" (:name hmap) "/> .")]
     (apply str
-           [csv "\n" rdfs "\n" dcterms "\n" xsd "\n" seas "\n" ssn "\n" "\n\n"
+           [prefix "\n" csv "\n" dm4t "\n" rdfs "\n" dcterms "\n" xsd "\n" seas "\n" ssn "\n" "\n\n"
             (str "<" (:url hmap) "> a csv:CsvDocument ;\n")
             (str "  rdfs:label \"" (:name hmap) "\" ;\n")
             (str "  rdfs:comment \"" (:description hmap) "\" ;\n")

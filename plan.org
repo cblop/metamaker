@@ -1,17 +1,8 @@
 * MetaMaker
-** DONE plan what to do next
-   CLOSED: [2017-02-03 Fri 09:18]
-** DONE layout rows                                                       :1:
-   CLOSED: [2017-02-03 Fri 13:24]
-** DONE insert dropdown boxes into rows                                   :1:
-   CLOSED: [2017-02-03 Fri 13:24]
-** TODO redesign with triples in mind :1:
-** TODO create mockup of new design :2:
-** TODO populate mockup with data from db :2:
-** TODO read in basic metadata from parsed sample of CSV :3:
-** TODO autofill metadata dropdowns & text based on sampled CSV :4:
-** TODO write datapackage :2:
-** TODO write graphpackage (JSON-LD?) :4:
-** TODO set up Grafter service to transform to triples :3:
-** TODO set up endpoint creation service :4:
-* MetaSampler
+** TODO change ontology triples to something better
+* MetaQuery
+** TODO stream CSV
+** TODO send SPARQL queries from browser
+** TODO get CSV for SPARQL column
+** TODO add file metadata
+** TODO make webinar video

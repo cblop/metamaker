@@ -32,15 +32,15 @@
                    :width "40%"]]])))
 
 (defn description []
-  (let [description (re-frame/subscribe [:description])]
+  (let [desc (re-frame/subscribe [:description])]
     (fn []
       [v-box
        :gap "10px"
        :children [[label
                    :label "Description of the dataset:"]
                   [input-textarea
-                   :model description
-                   :on-change #(re-frame/dispatch [:update-description])
+                   :model desc
+                   :on-change #(re-frame/dispatch [:update-description %])
                    :width "90%"]]])))
 
 (defn fbutton []
@@ -224,16 +224,19 @@
 
 (defn go-button []
   (fn []
-    [h-box
-     :justify :center
-     :width "80%"
-     :margin "0 0 50px 0"
-     :children [
-                [button
-                 :style {:width "200px"}
-                 :label "Create Metadata!"
-                 :on-click #(re-frame/dispatch [:create-metadata])
-                 :class "btn-success"]]]))
+    [button
+     :style {:width "200px"}
+     :label "Create Metadata!"
+     :on-click #(re-frame/dispatch [:create-metadata])
+     :class "btn-success"]))
+
+(defn file-button []
+  (fn []
+    [button
+     :style {:width "200px"}
+     :label "Download .ttl file"
+     :on-click #(re-frame/dispatch [:download-turtle])
+     :class "btn-default"]))
 
 (defn main-panel []
   (let [heads (re-frame/subscribe [:row-tabs])]
@@ -276,7 +279,13 @@
                        [columns]
                        [gap
                         :size "20px"]
-                       [go-button]])
+                       [h-box
+                        :justify :center
+                        :width "80%"
+                        :margin "0 0 50px 0"
+                        :gap "20px"
+                        :children [[file-button]
+                                   [go-button]]]])
                     ]
                    ]
                   ]])))

@@ -2,21 +2,21 @@
 
 (def default-db
   {:name "MetaMaker"
-   :dataset-name "refit-house"
+   :dataset-name ""
    ;; :fname "http://mist.cs.bath.ac.uk/refit-cleaned/CLEAN_House1.csv"
    ;; :fname "/home/_mthom/repos/metagator/resources/local/test.csv"
    :fname ""
-   :description "Data collected as part of the REFIT project at the University of Strathclyde"
+   :description ""
    :selected-tab 0
    :datatypes [{:cat-b "Start time"
                 :cat-a "Time"
                 :type :string
-                :p "seas:measurementStart"
+                :p "ssn:startTime"
                 }
                {:cat-b "End time"
                 :cat-a "Time"
                 :type :string
-                :p "seas:measurementEnd"}
+                :p "ssn:endTime"}
                {:cat-b "Timestamp"
                 :cat-a "Time"
                 :type :string
@@ -24,45 +24,30 @@
                {:cat-b "Device"
                 :cat-a "Location"
                 :type :string
-                :p "seas:measurementSite"}
+                :p "dm4t:device"}
                {:cat-b "Sensor"
                 :cat-a "Location"
                 :type :string
-                :p "seas:measurementInstrument"}
+                :p "dm4t:sensor"}
                {
                 :cat-b "Room"
                 :cat-a "Location"
                 :type :string
-                :p "seas:measurementSite"}
+                :p "dm4t:room"}
                {:cat-b "House"
                 :cat-a "Location"
                 :type :string
-                :p "seas:measurementSite"
+                :p "dm4t:house"
                 }
                {
                 :cat-b "Appliance"
                 :cat-a "Location"
                 :type :string
-                :p "seas:measurementSite"}
-               {:cat-b "Room"
-                :cat-a "Location"
-                :type :string
-                :p "seas:measurementSite"
-                }
-               {:cat-b "House"
-                :cat-a "Location"
-                :type :string
-                :p "seas:measurementSite"
-                }
-               {:cat-b "Appliance"
-                :cat-a "Location"
-                :type :string
-                :p "seas:measurementSite"
-                }
+                :p "dm4t:appliance"}
                {:cat-b "Value"
                 :cat-a "Value"
                 :type :float
-                :p "seas:value"}
+                :p "ssn:hasValue"}
                {:cat-b "Maximum Value"
                 :cat-a "Value"
                 :type :float
