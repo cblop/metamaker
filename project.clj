@@ -42,7 +42,7 @@
     }
    :production
    {:cljsbuild
-    {:builds {:client {:compiler    {:main metagator.core
+    {:builds {:client {:compiler    {:main "metagator.core"
                                      :optimizations :advanced
                                      :elide-asserts true
                                      :pretty-print false}}}}}
