@@ -14,6 +14,8 @@
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-garden "0.2.8"]]
 
+  :main metagator.core/init
+
   :min-lein-version "2.5.3"
 
   :source-paths ["src/cljs"]
