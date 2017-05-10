@@ -153,6 +153,11 @@
  (fn [db]
    (:types db)))
 
+(re-frame/reg-sub-raw
+ :current-tab
+ (fn [db _]
+   (reaction (:current-tab @db))))
+
 (re-frame/reg-sub
  :description
  (fn [db]
@@ -163,3 +168,45 @@
  (fn [db]
    (:fname db)))
 
+
+(re-frame/reg-sub
+ :sparql
+ (fn [db]
+   (:sparql db)))
+
+(re-frame/reg-sub
+ :selected-cats
+ (fn [db]
+   (:cat-qa db)))
+
+(re-frame/reg-sub
+ :selected-cat-a
+ (fn [db [_ i]]
+   (nth (:cat-qa db) i)))
+
+(re-frame/reg-sub
+ :cat-as
+ (fn [db]
+   (:cat-as db)))
+
+
+(re-frame/reg-sub
+ :filtered-cats
+ (fn [db [_ i]]
+   (nth (:filtered-cats db) i)))
+
+
+(re-frame/reg-sub
+ :cat-bs
+ (fn [db]
+   (:cat-bs db)))
+
+(re-frame/reg-sub
+ :selected-cat-qa
+ (fn [db [_ i]]
+   (nth (:cat-qa db) i)))
+
+(re-frame/reg-sub
+ :selected-cat-qb
+ (fn [db [_ i]]
+   (nth (:cat-qb db) i)))

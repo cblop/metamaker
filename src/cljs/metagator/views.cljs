@@ -1,7 +1,12 @@
 (ns metagator.views
   (:require [re-frame.core :as re-frame]
             [re-com.core :refer [input-text input-textarea title v-box h-box gap label button single-dropdown horizontal-tabs vertical-pill-tabs md-circle-icon-button]]
+            [metagator.query :refer [dataset-drop sparql-text send-query cat-a-drop cat-b-drop text-filter cat-select add-triple get-readings]]
             [reagent.core :as reagent]))
+
+(def tab-list [{:id :tab1 :label "Create Metadata"}
+               {:id :tab2 :label "Query Data"}
+               ])
 
 (defn filename []
   (let [fname (re-frame/subscribe [:fname])]
@@ -218,9 +223,12 @@
 (defn page-title []
   (let [name (re-frame/subscribe [:name])]
     (fn []
-      [title
-       :label @name
-       :level :level1])))
+      [h-box
+       :justify :center
+       :children [
+                  [title
+                   :label @name
+                   :level :level1]]])))
 
 (defn go-button []
   (fn []
@@ -238,54 +246,89 @@
      :on-click #(re-frame/dispatch [:download-turtle])
      :class "btn-default"]))
 
-(defn main-panel []
+(defn tabs []
+  (let [current-tab (re-frame/subscribe [:current-tab])]
+    [horizontal-tabs
+     :model @current-tab
+     :tabs tab-list
+     :on-change #(re-frame/dispatch [:tab-changed %])]))
+
+(defn create-tab []
   (let [heads (re-frame/subscribe [:row-tabs])]
-    (fn []
-      [v-box
-       :height "100%"
-       :gap "20px"
+    [v-box
+     :margin "0 0 0 15%"
+     :gap "10px"
+     :children
+     [
+      [label
+       :label "Path to local CSV file:"]
+      [h-box
+       :gap "5px"
        :children [
-                  [h-box
-                   :justify :center
-                   :children [
-                              [page-title]]]
-                  [v-box
-                   :margin "0 0 0 15%"
-                   :gap "10px"
-                   :children
-                   [
-                    [label
-                     :label "Path to local CSV file:"]
-                    [h-box
-                     :gap "5px"
-                     :children [
-                                [localfile]
-                                ]]
-                    ;; [label
-                    ;;  :label "Path to remote CSV file:"]
-                    ;; [h-box
-                    ;;  :gap "5px"
-                    ;;  :children [
-                    ;;             [filename]
-                    ;;             [fbutton]]]
-                    [gap
-                     :size "10px"]
-                    [dataset-name]
-                    [gap
-                     :size "10px"]
-                    [description]
-                    (if @heads
-                      [:div
-                       [columns]
-                       [gap
-                        :size "20px"]
-                       [h-box
-                        :justify :center
-                        :width "80%"
-                        :margin "0 0 50px 0"
-                        :gap "20px"
-                        :children [[file-button]
-                                   [go-button]]]])
-                    ]
-                   ]
-                  ]])))
+                  [localfile]
+                  ]]
+      ;; [label
+      ;;  :label "Path to remote CSV file:"]
+      ;; [h-box
+      ;;  :gap "5px"
+      ;;  :children [
+      ;;             [filename]
+      ;;             [fbutton]]]
+      [gap
+       :size "10px"]
+      [dataset-name]
+      [gap
+       :size "10px"]
+      [description]
+      (if @heads
+        [:div
+         [columns]
+         [gap
+          :size "20px"]
+         [h-box
+          :justify :center
+          :width "80%"
+          :margin "0 0 50px 0"
+          :gap "20px"
+          :children [[file-button]
+                     [go-button]]]])
+      ]
+     ])
+  )
+
+(defn query-tab []
+  [v-box
+   :height "100%"
+   :gap "20px"
+   :children [
+              [dataset-drop]
+              [cat-select]
+              [add-triple]
+              ;; [get-readings]
+              [sparql-text]
+              [send-query]
+              ]]
+  )
+
+(defn content []
+  (let [current-tab (re-frame/subscribe [:current-tab])]
+    (case @current-tab
+      :tab1 [create-tab]
+      :tab2 [query-tab]
+      gap)))
+
+
+(defn main-panel []
+  (fn []
+    [v-box
+     :height "100%"
+     :gap "20px"
+     :children [
+                [v-box
+                 :justify :center
+                 :gap "20px"
+                 :children [
+                            [page-title]
+                            [tabs]
+                            [content]]]
+                ]]))

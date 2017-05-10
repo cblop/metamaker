@@ -1,8 +1,17 @@
 * MetaMaker
-** TODO change ontology triples to something better
-* MetaQuery
-** TODO stream CSV
-** TODO send SPARQL queries from browser
-** TODO get CSV for SPARQL column
-** TODO add file metadata
-** TODO make webinar video
+** DONE run triplestore server from Mist again
+   CLOSED: [2017-05-06 Sat 11:22]
+** DONE put metaquery stuff in new tab
+   CLOSED: [2017-05-06 Sat 14:07]
+** DONE redo dropdowns for metagator so that they work like metaquery ones
+   CLOSED: [2017-05-08 Mon 14:54]
+** DONE get standard query returning stuff
+   CLOSED: [2017-05-08 Mon 14:54]
+** TODO convert dataset names to lowercase, one word
+** TODO change uris to actual hosted file locations, and upload csv files
+** TODO stream in csv from file
+** TODO stream in a particular column of csv
+** TODO filter column by date range
+** TODO random sampling of date range column
+** TODO plot time series of column for date range
+** TODO repeat above, but for TSV

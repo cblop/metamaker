@@ -2,11 +2,21 @@
     (:require [re-frame.core :as re-frame]
               [ajax.core :refer [GET POST]]
               [metagator.parser :as parser]
+              [re-com.dropdown :refer [filter-choices-by-keyword]]
               [metagator.meta :refer [make-triples]]
               [metagator.types :refer [detect-type]]
               [metagator.db :as db]))
 
-(def HOST "http://mist.cs.bath.ac.uk:3000")
+(def HOST "http://mist.cs.bath.ac.uk")
+
+
+(def query-template "PREFIX csv:<http://www.ntnu.no/ub/data/csv#>
+  PREFIX ssn:<http://purl.oclc.org/NET/ssnx/ssn#>
+
+  SELECT ?f ?i 
+  WHERE {?f csv:hasColumn ?c .
+                ?c csv:mapsTo ssn:hasValue .
+                ?c csv:hasIndex ?i .}")
 
 (re-frame/reg-event-db
  :initialize-db
@@ -40,7 +50,7 @@
    (let [url (first (array-seq (.-files (.getElementById js/document "file"))))]
      (do
        (parser/parse-sample url 10)
-       (assoc db :url (str "http://www.cs.bath.ac.uk/dm4t/" (.-name url)))))))
+       (assoc db :url (str "http://mist.cs.bath.ac.uk/dataset/" (.-name url)))))))
 
 (re-frame/reg-event-db
  :fetch
@@ -257,11 +267,70 @@
      (println (make-triples hmap))
      (POST (str HOST "/add/") {:params {:file (make-triples hmap)}
                                :headers {:content-type "application/json"
-                                         :access-control-allow-origin "*"
-                                         :access-control-allow-methods "GET, POST"
-                                         :access-control-allow-headers "X-Custom-Header"
+                                         ;; :access-control-allow-origin "*"
+                                         ;; :access-control-allow-methods "GET, POST"
+                                         ;; :access-control-allow-headers "X-Custom-Header"
                                          }
                                :format :json
                                :handler #(re-frame/dispatch [:load-turtle-handler %1])
                                :bad-response #(re-frame/dispatch [:bad-response %1])})
      db)))
+
+;; QUERY STUFF
+
+(re-frame/reg-event-db
+ :update-sparql
+ (fn [db [_ query]]
+   (assoc db :sparql query)))
+
+(re-frame/reg-event-db
+ :add-triple
+ (fn [db _]
+   (assoc (assoc (assoc db :cat-qa (conj (:cat-qa db) nil)) :cat-qb (conj (:cat-qb db) nil)) :filtered-cats (conj (:filtered-cats db) []))))
+
+(re-frame/reg-event-db
+ :change-cat-a
+ (fn [db [_ i new]]
+   (println new)
+   (assoc-in (assoc-in (assoc-in db [:cat-qa i] new) [:filtered-cats i] (vec (filter-choices-by-keyword (:cat-bs db) :cat-id new))) [:cat-qb i] nil)))
+
+(re-frame/reg-event-db
+ :change-cat-b
+ (fn [db [_ i new]]
+   (assoc-in db [:cat-qb i] new)))
+
+(re-frame/reg-event-db
+ :query-response-handler
+ (fn [db [_ response]]
+   (let [resp (js->clj (.parse js/JSON response) :keywordize-keys true)
+         f (:value (:f (first (:bindings (:results resp)))))]
+     (println response)
+     (println resp)
+     (println f)
+     (parser/parse-stream f)
+     (assoc db :response response))))
+
+(re-frame/reg-event-db
+ :error-handler
+ (fn [db [_ response]]
+   (do
+     (println (str "SERVER ERROR: " response))
+     db)
+   ))
+
+(re-frame/reg-event-db
+ :send-sparql
+ (fn [db _]
+   ;; (js/alert (str "Query is: " (:sparql db)))
+   (POST (str HOST "/query/")
+         {:params {:sparql (:sparql db)}
+          :format :json
+          :handler #(re-frame/dispatch [:query-response-handler %1])
+          :error-handler #(re-frame/dispatch [:error-handler %1])})
+
+   db))
+
+(re-frame/reg-event-db
+ :tab-changed
+ (fn [db [_ tab-id]]
+   (assoc db :current-tab tab-id)))

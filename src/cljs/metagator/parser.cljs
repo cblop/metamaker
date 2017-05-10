@@ -13,6 +13,7 @@
 (defn stepfn [results parser]
   (println (str "Row data:" (js->clj (first (.-data results))))))
 
+
 (defn complete [results, parser]
   (let [clj-results (:data (js->clj results :keywordize-keys true))]
     (do
@@ -31,6 +32,19 @@
                     ;; :header true
                     ;; :worker true
                     :preview size
+                    })))
+
+
+(defn parse-stream [fname]
+  (.parse js/Papa fname
+          (clj->js {
+                    :download false
+                    :dynamicTyping true
+                    :step stepfn
+                    ;; :complete complete
+                    ;; :header true
+                    ;; :worker true
+                    ;; :preview size
                     })))
 
 ;; (clj->js {:download true
