@@ -39,7 +39,14 @@
                    [com.cemerick/piggieback "0.2.1"]]
 
     :plugins      [[lein-figwheel "0.5.7"]]
-    }}
+    }
+   :production
+   {:cljsbuild
+    {:builds {:client {:compiler    {:main metagator.core
+                                     :optimizations :advanced
+                                     :elide-asserts true
+                                     :pretty-print false}}}}}
+   }
 
   :cljsbuild
   {:builds
