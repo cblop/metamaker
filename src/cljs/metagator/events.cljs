@@ -302,10 +302,12 @@
 (re-frame/reg-event-db
  :query-response-handler
  (fn [db [_ response]]
-   (let [resp (js->clj (.parse js/JSON response) :keywordize-keys true)
-         f (:value (:f (first (:bindings (:results resp)))))]
+   (let [json (get response "out")
+         p (println response)
+         j (js->clj (.parse js/JSON json) :keywordize-keys true)
+         f (get-in j [:results :bindings 0 :f :value])
+         ]
      (println response)
-     (println resp)
      (println f)
      (parser/parse-stream f)
      (assoc db :response response))))
