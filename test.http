@@ -1,0 +1,6 @@
+POST http://mist.bath.ac.uk/query
+Content-Type: application/json
+
+{
+  "sparql": "SELECT ?s ?p ?o WHERE {?s ?p ?o}"
+}

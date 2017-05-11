@@ -11,7 +11,8 @@
 
 
 (defn stepfn [results parser]
-  (println (str "Row data:" (js->clj (first (.-data results)))))
+  (println results)
+  ;; (println (str "Row data:" (js->clj (first (.-data results)))))
   )
 
 
@@ -37,13 +38,13 @@
 
 
 (defn parse-stream [fname]
-  (.parse js/Papa fname
+  (.parse js/Papa "http://163.172.182.16/datasets/test.csv"
           (clj->js {
                     :download true
                     :dynamicTyping true
                     :step stepfn
                     ;; :complete complete
-                    ;; :header true
+                    :header true
                     ;; :worker true
                     ;; :preview size
                     })))

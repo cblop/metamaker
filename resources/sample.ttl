@@ -1,0 +1,36 @@
+@prefix csv:<http://www.ntnu.no/ub/data/csv#> .
+@prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms:<http://purl.org/dc/terms/> .
+@prefix xsd:<http://www.w3.org/2001/XMLSchema#> .
+@prefix seas:<https://w3id.org/seas#> .
+@prefix ssn:<http://purl.oclc.org/NET/ssnx/ssn#> .
+
+
+<http://www.cs.bath.ac.uk/dm4t/test.csv> a csv:CsvDocument ;
+  rdfs:label "refit-house" ;
+  rdfs:comment "Data collected as part of the REFIT project at the University of Strathclyde" ;
+  csv:hasColumn :column0 ;
+  csv:hasColumn :column1 ;
+  csv:hasColumn :column2 ;
+  csv:hasColumn :column3 ;
+  csv:hasColumn :column4 ;
+  csv:hasColumn :column5 .
+
+:column0 a csv:Column ;
+  csv:hasIndex "0" .
+
+:column1 a csv:Column ;
+  csv:hasIndex "1" .
+
+:column2 a csv:Column ;
+  csv:hasIndex "2" .
+
+:column3 a csv:Column ;
+  csv:hasIndex "3" .
+
+:column4 a csv:Column ;
+  csv:hasIndex "4" .
+
+:column5 a csv:Column ;
+  csv:hasIndex "5" .
+

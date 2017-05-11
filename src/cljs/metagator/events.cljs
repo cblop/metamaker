@@ -327,6 +327,9 @@
    (POST (str HOST "/query/")
          {:params {:sparql (:sparql db)}
           :format :json
+          :access-control-allow-origin "*"
+          :access-control-allow-methods "GET, POST"
+          :access-control-allow-headers "X-Custom-Header,Content-Range,range"
           :handler #(re-frame/dispatch [:query-response-handler %1])
           :error-handler #(re-frame/dispatch [:error-handler %1])})
 
