@@ -19,5 +19,6 @@
 
 (defn ^:export init []
   (re-frame/dispatch-sync [:initialize-db])
+  (enable-console-print!)
   (dev-setup)
   (mount-root))

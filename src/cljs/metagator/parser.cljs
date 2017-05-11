@@ -43,7 +43,7 @@
                     :dynamicTyping true
                     :step stepfn
                     ;; :complete complete
-                    :header true
+                    ;; :header true
                     ;; :worker true
                     ;; :preview size
                     })))
