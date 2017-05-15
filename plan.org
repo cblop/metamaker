@@ -8,10 +8,15 @@
 ** DONE get standard query returning stuff
    CLOSED: [2017-05-08 Mon 14:54]
 ** TODO convert dataset names to lowercase, one word
+** TODO add data URL to metadata
 ** TODO change uris to actual hosted file locations, and upload csv files
-** TODO stream in csv from file
-** TODO stream in a particular column of csv
+** DONE stream in csv from file
+   CLOSED: [2017-05-15 Mon 09:21]
+** DONE stream in a particular column of csv
+   CLOSED: [2017-05-15 Mon 09:21]
+** TODO add date range to interface
 ** TODO filter column by date range
 ** TODO random sampling of date range column
-** TODO plot time series of column for date range
+** DONE plot time series of column for date range
+   CLOSED: [2017-05-15 Mon 09:22]
 ** TODO repeat above, but for TSV

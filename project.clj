@@ -7,6 +7,7 @@
                  [re-com "0.8.3"]
                  [garden "1.3.2"]
                  [cljs-ajax "0.5.8"]
+                 [cljsjs/chartjs "2.5.0-0"]
                  [cljsjs/papaparse "4.1.1-1"]
                  [ns-tracker "0.3.0"]]
 

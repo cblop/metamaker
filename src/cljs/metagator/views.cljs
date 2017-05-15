@@ -1,7 +1,7 @@
 (ns metagator.views
   (:require [re-frame.core :as re-frame]
             [re-com.core :refer [input-text input-textarea title v-box h-box gap label button single-dropdown horizontal-tabs vertical-pill-tabs md-circle-icon-button]]
-            [metagator.query :refer [dataset-drop sparql-text send-query cat-a-drop cat-b-drop text-filter cat-select add-triple get-readings]]
+            [metagator.query :refer [dataset-drop sparql-text send-query cat-a-drop cat-b-drop text-filter cat-select add-triple get-readings chart-inner localfile-b]]
             [reagent.core :as reagent]))
 
 (def tab-list [{:id :tab1 :label "Create Metadata"}
@@ -14,15 +14,13 @@
       [input-text
        :model fname
        :on-change #(re-frame/dispatch [:fname-change %])
-       :width "80%"])))
+       :width "100%"])))
 
 (defn localfile []
   (let [fname (re-frame/subscribe [:fname])]
     (fn []
       [:input {:type "file" :id "file" :name "file"
                :on-change #(re-frame/dispatch [:upload-file %])}])))
-
-
 
 (defn dataset-name []
   (let [dname (re-frame/subscribe [:dname])]
@@ -260,20 +258,25 @@
      :gap "10px"
      :children
      [
-      [label
-       :label "Path to local CSV file:"]
       [h-box
-       :gap "5px"
+       :gap "10px"
        :children [
-                  [localfile]
-                  ]]
-      ;; [label
-      ;;  :label "Path to remote CSV file:"]
-      ;; [h-box
-      ;;  :gap "5px"
-      ;;  :children [
-      ;;             [filename]
-      ;;             [fbutton]]]
+                  [label
+                   :label "Path to local CSV file:"]
+                  [h-box
+                   :gap "5px"
+                   :children [
+                              [localfile]
+                              ]]
+                  [label :label "OR"]
+                  [gap :size "60px"]
+                  [label
+                   :label "Path to remote CSV file:"]
+                  [h-box
+                   :gap "5px"
+                   :children [
+                              [filename]
+                              [fbutton]]]]]
       [gap
        :size "10px"]
       [dataset-name]
@@ -297,17 +300,20 @@
   )
 
 (defn query-tab []
-  [v-box
-   :height "100%"
-   :gap "20px"
-   :children [
-              [dataset-drop]
-              [cat-select]
-              [add-triple]
-              ;; [get-readings]
-              [sparql-text]
-              [send-query]
-              ]]
+  (let [data (re-frame/subscribe [:chart-data])]
+    [v-box
+     :height "100%"
+     :gap "20px"
+     :children [
+                [dataset-drop]
+                [cat-select]
+                ;; [add-triple]
+                ;; [get-readings]
+                [sparql-text]
+                [send-query]
+                [:div {:style {:margin "auto"}} [localfile-b]]
+                [:div {:style {:width "900px" :height "200px" :margin "auto"}} [chart-inner (:data @data)]]
+                ]])
   )
 
 (defn content []

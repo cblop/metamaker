@@ -1,8 +1,15 @@
 (ns metagator.repl
-  (:require [cljsjs.papaparse]
+  (:require 
             [re-frame.core :as re-frame]))
 
 (def db (re-frame/subscribe [:db]))
+(def data (re-frame/subscribe [:chart-data]))
+
+(:chart-data @db)
+
+@data
+
+@db
 
 (:name @db)
 (:description @db)

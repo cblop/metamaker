@@ -18,6 +18,11 @@
    db))
 
 (re-frame/reg-sub
+ :datasets
+ (fn [db]
+   (:datasets db)))
+
+(re-frame/reg-sub
  :rows
  (fn [db]
    (:rows db)))
@@ -153,6 +158,12 @@
  (fn [db]
    (:types db)))
 
+
+(re-frame/reg-sub
+ :selected-sets
+ (fn [db]
+   (:selected-sets db)))
+
 (re-frame/reg-sub-raw
  :current-tab
  (fn [db _]
@@ -168,11 +179,43 @@
  (fn [db]
    (:fname db)))
 
+(re-frame/reg-sub
+ :srate
+ (fn [db]
+   (:srate db)))
+
 
 (re-frame/reg-sub
  :sparql
  (fn [db]
-   (:sparql db)))
+   (:sparql db)
+   (let [cat-as (:cat-qa db)
+         cat-bs (:cat-qb db)
+         filtered (:filtered-cats db)
+         ]
+     (if-not (and (nil? (second cat-bs)) (nil? (first cat-bs)))
+       (str "PREFIX csv:<http://www.ntnu.no/ub/data/csv#>\n"
+            "PREFIX ssn:<http://purl.oclc.org/NET/ssnx/ssn#>\n"
+            "PREFIX seas:<https://w3id.org/seas#>\n"
+            "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>\n"
+            "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n"
+            "SELECT *\n"
+            "WHERE {{"
+            "SELECT ?f ?x WHERE {\n"
+            "                    ?f rdfs:label " (:dataset db) " .\n"
+            "                    ?f csv:hasColumn ?c .\n"
+            "                    ?c csv:mapsTo " (:p (nth (:cat-bs db) (first cat-bs))) " .\n"
+            "                    ?c csv:hasIndex ?x .}\n"
+            "} UNION {\n"
+            "  SELECT ?y WHERE {\n"
+            "                    ?f rdfs:label " (:dataset db) " .\n"
+            "                   ?f csv:hasColumn ?cy .\n"
+            "                   ?cy csv:mapsTo " (:p (nth (:cat-bs db) (second cat-bs))) " .\n"
+            "                   ?cy csv:hasIndex ?y .}}}\n"
+            )
+       "")
+     )
+   ))
 
 (re-frame/reg-sub
  :selected-cats
@@ -189,6 +232,18 @@
  (fn [db]
    (:cat-as db)))
 
+(re-frame/reg-sub
+ :chart-data
+ (fn [db]
+   (:chart-data db)))
+
+(re-frame/reg-sub
+ :data-urls
+ (fn [db]
+   (let [resp (js->clj (.parse js/JSON (get (:response db) "out")) :keywordize-keys true)
+         results (get-in resp [:results :bindings])]
+     (into [] (set (map #(hash-map :label (get-in % [:label :value]) :url (get-in % [:url :value])) results)))
+     )))
 
 (re-frame/reg-sub
  :filtered-cats

@@ -37,7 +37,8 @@
 (re-frame/reg-event-db
  :fname-change
  (fn [db [_ fname]]
-   (assoc db :fname fname)))
+   (parser/parse-remote-sample fname 10)
+   (assoc db :url fname)))
 
 (re-frame/reg-event-db
  :dname-change
@@ -51,6 +52,14 @@
      (do
        (parser/parse-sample url 10)
        (assoc db :url (str "http://mist.cs.bath.ac.uk/dataset/" (.-name url)))))))
+
+(re-frame/reg-event-db
+ :stream-local
+ (fn [db [_ fname]]
+   (let [url (first (array-seq (.-files (.getElementById js/document "file"))))]
+     (do
+       (parser/parse-local url)
+       ))))
 
 (re-frame/reg-event-db
  :fetch
@@ -211,6 +220,29 @@
    (assoc db :metas (vec (repeat (count (first rows)) [])))))
 
 (re-frame/reg-event-db
+ :reset-chart-data
+ (fn [db [_ data]]
+   (assoc db :chart-data {:data {:labels []
+                                 :datasets []}})))
+
+(re-frame/reg-event-db
+ :set-chart-data
+ (fn [db [_ data]]
+   ;; (println (:chart-data db))
+   (assoc db :chart-data data)))
+
+
+(re-frame/reg-event-db
+ :add-chart-data
+ (fn [db [_ data]]
+   (println (:chart-data db))
+   (assoc-in
+    (assoc-in db [:chart-data :data :labels] (conj (:labels (:data (:chart-data db))) (:label data)))
+    [:chart-data :data :datasets 0 :data] (conj (:data (first (:datasets (:data (:chart-data db)))) (:data data)))
+    )))
+
+
+(re-frame/reg-event-db
  :set-rows
  (fn [db [_ rows]]
    (do
@@ -283,6 +315,25 @@
  (fn [db [_ query]]
    (assoc db :sparql query)))
 
+
+(re-frame/reg-event-db
+ :update-sparql-b
+ (fn [db [_ query]]
+   (assoc db :sparql-b query)))
+
+
+(re-frame/reg-event-db
+ :set-dataset
+ (fn [db [_ ids]]
+   (let [i (js/parseInt (first ids))]
+     (println i)
+     (assoc db :dataset (:label (nth (:datasets db) i))))))
+
+(re-frame/reg-event-db
+ :update-srate
+ (fn [db [_ rate]]
+   (assoc db :srate rate)))
+
 (re-frame/reg-event-db
  :add-triple
  (fn [db _]
@@ -297,7 +348,14 @@
 (re-frame/reg-event-db
  :change-cat-b
  (fn [db [_ i new]]
+   (println new)
    (assoc-in db [:cat-qb i] new)))
+
+(re-frame/reg-event-db
+ :delete-q-row
+ (fn [db [_ row-id]]
+   (assoc db :cat-qa (vec (drop-nth (:cat-qa db) row-id)))))
+
 
 (re-frame/reg-event-db
  :query-response-handler
@@ -306,11 +364,22 @@
          p (println response)
          j (js->clj (.parse js/JSON json) :keywordize-keys true)
          f (get-in j [:results :bindings 0 :f :value])
+         local (if (.getElementById js/document "file") (first (array-seq (.-files (.getElementById js/document "file")))) nil)
          ]
      (println response)
      (println f)
-     (parser/parse-stream f)
+     (if local (println "local" "remote"))
+     (if local
+       (parser/parse-local local)
+       (parser/parse-stream f))
      (assoc db :response response))))
+
+
+(re-frame/reg-event-db
+ :query-response-handler-b
+ (fn [db [_ response]]
+   (println response)
+   (assoc db :response response)))
 
 (re-frame/reg-event-db
  :error-handler
@@ -335,7 +404,41 @@
 
    db))
 
+
+(re-frame/reg-event-db
+ :send-sparql-b
+ (fn [db _]
+   ;; (js/alert (str "Query is: " (:sparql db)))
+   (POST (str HOST "/query/")
+         {:params {:sparql (:sparql-b db)}
+          :format :json
+          :access-control-allow-origin "*"
+          :access-control-allow-methods "GET, POST"
+          :access-control-allow-headers "X-Custom-Header,Content-Range,range"
+          :handler #(re-frame/dispatch [:query-response-handler-b %1])
+          :error-handler #(re-frame/dispatch [:error-handler %1])})
+
+   db))
+
+(re-frame/reg-event-db
+ :get-datasets
+ (fn [db _]
+   (do
+     (re-frame/dispatch [:update-sparql-b (str
+                                              "PREFIX csv:<http://www.ntnu.no/ub/data/csv#>\n"
+                                              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+                                              "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n"
+                                              "SELECT ?label ?url WHERE {?url rdf:type csv:CsvDocument .\n"
+                                              "                          ?url rdfs:label ?label}")])
+     (re-frame/dispatch [:send-sparql-b])
+     (let [urls (re-frame/subscribe [:data-urls])]
+       (println (str "URLS:" @urls))
+       (assoc db :datasets (map-indexed #(hash-map :id %1 :label (:label %2)) @urls))
+       )
+     )))
+
 (re-frame/reg-event-db
  :tab-changed
  (fn [db [_ tab-id]]
+   ;; (re-frame/dispatch [:get-datasets])
    (assoc db :current-tab tab-id)))

@@ -7,9 +7,18 @@
    ;; :fname "/home/_mthom/repos/metagator/resources/local/test.csv"
    :fname ""
    :dataset ""
-   :cat-qa [nil]
-   :cat-qb [nil]
-   :filtered-cats [[]]
+   :chart-data {:type "line"
+                :data
+                {:labels []
+                 :datasets [{:data []
+                             :label "Values"}]}}
+   :selected-sets (set ["0"])
+   :srate 1
+   :data-urls []
+   :datasets []
+   :cat-qa [nil nil]
+   :cat-qb [nil nil]
+   :filtered-cats [[] []]
    :cat-as [{:id "time" :label "Time"}
             {:id "type" :label "Reading Type"}
             {:id "location" :label "Location"}
