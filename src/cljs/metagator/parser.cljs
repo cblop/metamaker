@@ -3,6 +3,7 @@
    [re-frame.core :as re-frame]
    [cljsjs.papaparse]))
 
+
 (set! (.-SCRIPT_PATH js/Papa) "js/papaparse.min.js")
 
 ;; (defn stepfn [results parser]
@@ -15,15 +16,17 @@
                               :datasets [{:data []
                                           :label "Value"}]}}))
 
+(mod 5 1)
 
 (defn stepfn [results parser]
   ;; (println results)
   (let [clj-results (first (:data (js->clj results :keywordize-keys true)))
         x-index (js/parseInt @(re-frame/subscribe [:x]))
         y-index (js/parseInt @(re-frame/subscribe [:y]))
+        srate (js/parseInt @(re-frame/subscribe [:srate]))
         ]
     ;; (println (str "Row data:" clj-results))
-    (if (and (>= (count clj-results) y-index) (> @line-no 0))
+    (if (and (>= (count clj-results) y-index) (> @line-no 0) (= 0 (mod @line-no srate)))
       (do
         (reset! chart-data (assoc-in @chart-data [:data :labels] (conj (:labels (:data @chart-data)) (nth clj-results x-index))))
         (reset! chart-data (assoc-in @chart-data [:data :datasets 0 :data] (conj (:data (first (:datasets (:data @chart-data)))) (nth clj-results y-index))))

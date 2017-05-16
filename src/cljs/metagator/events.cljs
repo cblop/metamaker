@@ -215,6 +215,11 @@
    (assoc db :selected-tab tab)))
 
 (re-frame/reg-event-db
+ :srate-change
+ (fn [db [_ val]]
+   (assoc db :srate val)))
+
+(re-frame/reg-event-db
  :create-metas
  (fn [db [_ rows]]
    (assoc db :metas (vec (repeat (count (first rows)) [])))))
@@ -396,9 +401,9 @@
  (let [query (re-frame/subscribe [:sparql])]
    (fn [db _]
      ;; (js/alert (str "Query is: " (:sparql db)))
-     (re-frame/dispatch [:set-chart-data {:date {:labels []
-                                                 :datasets [{:data []
-                                                             :label "Value"}]}}])
+     ;; (re-frame/dispatch [:set-chart-data {:date {:labels []
+     ;;                                             :datasets [{:data []
+     ;;                                                         :label "Value"}]}}])
      (POST (str HOST "/query/")
            {:params {:sparql @query}
             :format :json

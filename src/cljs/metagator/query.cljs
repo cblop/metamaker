@@ -87,6 +87,7 @@
                  :choices filtered-cats
                  :width "150px"]]]))
 
+
 (defn text-filter []
   [re-com/input-text
    :model ""
@@ -94,14 +95,16 @@
 
 
 (defn sample-rate []
-  (let [srate (re-frame/subscribe [:sample-rate])]
+  (let [srate (re-frame/subscribe [:srate])]
     [re-com/h-box
      :gap "10px"
+     :justify :center
      :children [
                 [re-com/label :label "Sample every "]
                 [re-com/input-text
                  :model srate
-                 :on-change #(re-frame/dispatch [:update-srate])]
+                 :width "100px"
+                 :on-change #(re-frame/dispatch [:srate-change %])]
                 [re-com/label :label " readings."]
                 ]]))
 

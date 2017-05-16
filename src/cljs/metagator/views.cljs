@@ -1,7 +1,7 @@
 (ns metagator.views
   (:require [re-frame.core :as re-frame]
             [re-com.core :refer [input-text input-textarea title v-box h-box gap label button single-dropdown horizontal-tabs vertical-pill-tabs md-circle-icon-button]]
-            [metagator.query :refer [dataset-drop sparql-text send-query cat-a-drop cat-b-drop text-filter cat-select add-triple get-readings chart-inner localfile-b]]
+            [metagator.query :refer [dataset-drop sparql-text send-query cat-a-drop cat-b-drop text-filter cat-select add-triple get-readings chart-inner localfile-b sample-rate]]
             [reagent.core :as reagent]))
 
 (def tab-list [{:id :tab1 :label "Create Metadata"}
@@ -311,6 +311,7 @@
                 ;; [get-readings]
                 [sparql-text]
                 [send-query]
+                [sample-rate]
                 [:div {:style {:margin "auto"}} [localfile-b]]
                 [:div {:style {:width "900px" :height "200px" :margin "auto"}} [chart-inner (:data @data)]]
                 ]])

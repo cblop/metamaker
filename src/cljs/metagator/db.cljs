@@ -13,7 +13,7 @@
                  :datasets [{:data []
                              :label "Values"}]}}
    :selected-sets (set ["0"])
-   :srate 1
+   :srate "1"
    :data-urls []
    :datasets []
    :cat-qa [nil nil]
