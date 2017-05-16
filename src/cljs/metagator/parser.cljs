@@ -29,7 +29,7 @@
     (if (and (>= (count clj-results) y-index) (> @line-no 0) (= 0 (mod @line-no srate)))
       (do
         (reset! chart-data (assoc-in @chart-data [:data :labels] (conj (:labels (:data @chart-data)) (nth clj-results x-index))))
-        (reset! chart-data (assoc-in @chart-data [:data :datasets 0 :data] (conj (:data (first (:datasets (:data @chart-data)))) (nth clj-results y-index))))
+        (reset! chart-data (assoc-in @chart-data [:data :datasets 0 :data] (conj (:data (first (:datasets (:data @chart-data)))) (js/parseInt (nth clj-results y-index)))))
         (re-frame/dispatch [:set-chart-data @chart-data])
         ;; (re-frame/dispatch [:add-chart-data {:label (nth clj-results t-index) :data (nth clj-results v-index)}])
         ))
