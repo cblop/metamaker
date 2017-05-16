@@ -364,15 +364,17 @@
          p (println response)
          j (js->clj (.parse js/JSON json) :keywordize-keys true)
          f (get-in j [:results :bindings 0 :f :value])
+         x (get-in j [:results :bindings 0 :x :value])
+         y (get-in j [:results :bindings 1 :y :value])
          local (if (.getElementById js/document "file") (first (array-seq (.-files (.getElementById js/document "file")))) nil)
          ]
-     (println response)
+     ;; (println response)
      (println f)
      (if local (println "local" "remote"))
      (if local
        (parser/parse-local local)
        (parser/parse-stream f))
-     (assoc db :response response))))
+     (assoc (assoc (assoc db :response response) :x x) :y y))))
 
 
 (re-frame/reg-event-db
@@ -391,18 +393,22 @@
 
 (re-frame/reg-event-db
  :send-sparql
- (fn [db _]
-   ;; (js/alert (str "Query is: " (:sparql db)))
-   (POST (str HOST "/query/")
-         {:params {:sparql (:sparql db)}
-          :format :json
-          :access-control-allow-origin "*"
-          :access-control-allow-methods "GET, POST"
-          :access-control-allow-headers "X-Custom-Header,Content-Range,range"
-          :handler #(re-frame/dispatch [:query-response-handler %1])
-          :error-handler #(re-frame/dispatch [:error-handler %1])})
+ (let [query (re-frame/subscribe [:sparql])]
+   (fn [db _]
+     ;; (js/alert (str "Query is: " (:sparql db)))
+     (re-frame/dispatch [:set-chart-data {:date {:labels []
+                                                 :datasets [{:data []
+                                                             :label "Value"}]}}])
+     (POST (str HOST "/query/")
+           {:params {:sparql @query}
+            :format :json
+            :access-control-allow-origin "*"
+            :access-control-allow-methods "GET, POST"
+            :access-control-allow-headers "X-Custom-Header,Content-Range,range"
+            :handler #(re-frame/dispatch [:query-response-handler %1])
+            :error-handler #(re-frame/dispatch [:error-handler %1])})
 
-   db))
+     db)))
 
 
 (re-frame/reg-event-db

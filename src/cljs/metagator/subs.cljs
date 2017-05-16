@@ -184,6 +184,15 @@
  (fn [db]
    (:srate db)))
 
+(re-frame/reg-sub
+ :x
+ (fn [db]
+   (:x db)))
+
+(re-frame/reg-sub
+ :y
+ (fn [db]
+   (:y db)))
 
 (re-frame/reg-sub
  :sparql
@@ -202,13 +211,13 @@
             "SELECT *\n"
             "WHERE {{"
             "SELECT ?f ?x WHERE {\n"
-            "                    ?f rdfs:label " (:dataset db) " .\n"
+            "                    ?f rdfs:label \"" (:dataset db) "\" .\n"
             "                    ?f csv:hasColumn ?c .\n"
             "                    ?c csv:mapsTo " (:p (nth (:cat-bs db) (first cat-bs))) " .\n"
             "                    ?c csv:hasIndex ?x .}\n"
             "} UNION {\n"
             "  SELECT ?y WHERE {\n"
-            "                    ?f rdfs:label " (:dataset db) " .\n"
+            "                    ?f rdfs:label \"" (:dataset db) "\" .\n"
             "                   ?f csv:hasColumn ?cy .\n"
             "                   ?cy csv:mapsTo " (:p (nth (:cat-bs db) (second cat-bs))) " .\n"
             "                   ?cy csv:hasIndex ?y .}}}\n"

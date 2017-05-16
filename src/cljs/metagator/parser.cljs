@@ -19,14 +19,14 @@
 (defn stepfn [results parser]
   ;; (println results)
   (let [clj-results (first (:data (js->clj results :keywordize-keys true)))
-        t-index 0
-        v-index 5
+        x-index (js/parseInt @(re-frame/subscribe [:x]))
+        y-index (js/parseInt @(re-frame/subscribe [:y]))
         ]
     ;; (println (str "Row data:" clj-results))
-    (if (and (>= (count clj-results) v-index) (> @line-no 0))
+    (if (and (>= (count clj-results) y-index) (> @line-no 0))
       (do
-        (reset! chart-data (assoc-in @chart-data [:data :labels] (conj (:labels (:data @chart-data)) (nth clj-results t-index))))
-        (reset! chart-data (assoc-in @chart-data [:data :datasets 0 :data] (conj (:data (first (:datasets (:data @chart-data)))) (nth clj-results v-index))))
+        (reset! chart-data (assoc-in @chart-data [:data :labels] (conj (:labels (:data @chart-data)) (nth clj-results x-index))))
+        (reset! chart-data (assoc-in @chart-data [:data :datasets 0 :data] (conj (:data (first (:datasets (:data @chart-data)))) (nth clj-results y-index))))
         (re-frame/dispatch [:set-chart-data @chart-data])
         ;; (re-frame/dispatch [:add-chart-data {:label (nth clj-results t-index) :data (nth clj-results v-index)}])
         ))
@@ -69,29 +69,39 @@
 
 
 (defn parse-local [fname]
-  (.parse js/Papa fname
-          (clj->js {
-                    :download false
-                    :dynamicTyping true
-                    :step stepfn
-                    ;; :complete complete
-                    :header false
-                    ;; :worker true
-                    ;; :preview size
-                    })))
+  (do
+    (reset! chart-data {:type "line"
+                        :data {:labels []
+                               :datasets [{:data []
+                                           :label "Value"}]}})
+    (.parse js/Papa fname
+            (clj->js {
+                      :download false
+                      :dynamicTyping true
+                      :step stepfn
+                      ;; :complete complete
+                      :header false
+                      ;; :worker true
+                      ;; :preview size
+                      }))))
 
 
 (defn parse-stream [fname]
-  (.parse js/Papa fname
-          (clj->js {
-                    :download true
-                    :dynamicTyping true
-                    :step stepfn
-                    ;; :complete complete
-                    :header false
-                    ;; :worker true
-                    ;; :preview size
-                    })))
+  (do
+    (reset! chart-data {:type "line"
+                        :data {:labels []
+                               :datasets [{:data []
+                                           :label "Value"}]}})
+    (.parse js/Papa fname
+            (clj->js {
+                      :download true
+                      :dynamicTyping true
+                      :step stepfn
+                      ;; :complete complete
+                      :header false
+                      ;; :worker true
+                      ;; :preview size
+                      }))))
 
 ;; (clj->js {:download true
 ;;           :dynamic-typing true
